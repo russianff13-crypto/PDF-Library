@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-widt    <div class="initial-loading" id="initial-loading">
-        <div class="loading-content">
-            <img src="iconTrans.png" alt="Kita" class="loading-icon-img">
-            <div class="loading-text">Loading Kita...</div>
-            <div class="loading-spinner"></div>itial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kita PDF Reader</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: file: https://cdnjs.cloudflare.com;">
 </head>
-<body>
+<body>    <!-- Initial Loading Screen -->
+    <div class="initial-loading" id="initial-loading">
+        <div class="loading-content">
+            <img src="iconTrans.png" alt="Kita" class="loading-icon-img">
+        </div>
+    </div>
     <div id="title-bar">
         <div class="app-title">
             <img src="iconTrans.png" alt="Kita" class="app-icon">
@@ -74,29 +75,29 @@
                         <span>Check for Updates</span>
                         <small>Stay up to date</small>
                     </div>
-                </div>
-                <div class="settings-item" id="about-btn">
+                </div>                <div class="settings-item" id="about-btn">
                     <i class="fas fa-heart"></i>
                     <div class="settings-item-content">
                         <span>About Kita</span>
-                        <small>Version 2.0.1</small>
+                        <small>Version 2.2.0</small>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- About Dialog -->
-    <div id="about-dialog" class="update-dialog hidden">
-        <div class="update-content">
+    </div>    <!-- About Dialog -->
+    <div id="about-dialog" class="update-dialog hidden">        <div class="update-content">
             <img src="iconTrans.png" alt="Kita" class="about-icon">
             <h2>Kita PDF Reader</h2>
-            <p class="about-version">Version 2.0.1</p>
+            <p class="about-version">Version 2.2.0</p>
             <p class="about-description">Modern PDF reader with advanced features</p>
             <div class="about-info">
                 <div class="about-info-item">
                     <i class="fas fa-code"></i>
                     <span>Built with Electron & PDF.js</span>
+                </div>
+                <div class="about-info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>samoutff22@gmail.com</span>
                 </div>
                 <div class="about-info-item">
                     <i class="fas fa-copyright"></i>
@@ -113,20 +114,10 @@
     <div id="update-dialog" class="update-dialog hidden">
         <!-- Content dynamically generated -->
     </div>
-    
-    <!-- Offline Indicator -->
+      <!-- Offline Indicator -->
     <div id="offline-indicator" class="offline-indicator hidden">
         <i class="fas fa-wifi-slash"></i>
         <span>Offline Mode</span>
-    </div>
-
-    <!-- ✅ Initial Loading Screen -->
-    <div id="initial-loading" class="initial-loading">
-        <div class="loading-content">
-            <img src="iconTrans.png" alt="Kitaku" class="loading-icon-img">
-            <div class="loading-text">Loading Kitaku...</div>
-            <div class="loading-spinner"></div>
-        </div>
     </div>
 
     <div class="container" id="main-container">
@@ -254,10 +245,9 @@
                     <button id="zoom-in" class="navbar-btn" title="Zoom In (+)"><i class="fas fa-search-plus"></i></button>
                     <button id="zoom-reset" class="navbar-btn" title="Fit to Width (0)"><i class="fas fa-expand-arrows-alt"></i></button>
                 </div>
+                  <div class="navbar-divider"></div>
                 
-                <div class="navbar-divider"></div>
-                
-                <button id="invert-colors" class="navbar-btn" title="Invert Colors (Ctrl+I)"><i class="fas fa-adjust"></i></button>
+                <button id="invert-colors" class="navbar-btn" title="Dark Mode (Ctrl+I)"><i class="fas fa-moon"></i></button>
                 
                 <div class="navbar-divider"></div>
                 

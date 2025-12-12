@@ -16,6 +16,30 @@ if (!fs.existsSync(BOOKS_STORAGE_PATH)) {
     console.log('📁 Created BooksStorage folder:', BOOKS_STORAGE_PATH);
 }
 
+// ✅ متغير لتخزين ملفات PDF المفتوحة من النظام
+let pendingPdfToOpen = null;
+
+// ✅ دعم فتح ملفات PDF من النظام (Windows)
+if (process.platform === 'win32' && process.argv.length >= 2) {
+    const filePath = process.argv[1];
+    if (filePath && filePath.toLowerCase().endsWith('.pdf')) {
+        pendingPdfToOpen = filePath;
+    }
+}
+
+// ✅ دعم فتح ملفات PDF من النظام (macOS)
+app.on('open-file', (event, filePath) => {
+    event.preventDefault();
+    if (filePath && filePath.toLowerCase().endsWith('.pdf')) {
+        pendingPdfToOpen = filePath;
+        // إذا كان التطبيق جاهز، افتح الملف مباشرة
+        const allWindows = BrowserWindow.getAllWindows();
+        if (allWindows.length > 0) {
+            allWindows[0].webContents.send('open-external-pdf', filePath);
+        }
+    }
+});
+
 function createWindow() {
     const win = new BrowserWindow({
         width: 1200,
@@ -26,7 +50,9 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
-            webSecurity: false
+            webSecurity: false,
+            // ✅ تفعيل الوصول للملفات في Drag & Drop
+            enableRemoteModule: true
         },        backgroundColor: '#1a1a1a',
         show: false,
         title: 'Kita PDF Reader'
@@ -34,16 +60,27 @@ function createWindow() {
 
     win.maximize(); // Start maximized
 
-    win.loadFile('index.html');
-
-    win.once('ready-to-show', () => {
+    win.loadFile('index.html');    win.once('ready-to-show', () => {
         win.show();
+        
+        // ✅ إذا كان هناك ملف PDF تم فتحه من النظام، أرسله للواجهة
+        if (pendingPdfToOpen) {
+            setTimeout(() => {
+                win.webContents.send('open-external-pdf', pendingPdfToOpen);
+                pendingPdfToOpen = null;
+            }, 1000); // انتظر ثانية حتى يكتمل تحميل الواجهة
+        }
     });
 
     // Open external links in default browser
     win.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
         return { action: 'deny' };
+    });
+    
+    // ✅ دعم Drag & Drop لملفات PDF
+    win.webContents.on('will-navigate', (event, url) => {
+        event.preventDefault();
     });
 }
 

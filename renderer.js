@@ -109,9 +109,9 @@ const pageInputWrapper = document.getElementById('page-input-wrapper');
 const navbarPageInput = document.getElementById('navbar-page-input');
 const navbarGoBtn = document.getElementById('navbar-go-btn');
 
-// Invert colors button
+// Invert colors button (Dark Mode in PDF)
 const invertColorsBtn = document.getElementById('invert-colors');
-let isColorsInverted = localStorage.getItem('colorsInverted') === 'true';
+let pdfDarkModeSettings = JSON.parse(localStorage.getItem('pdfDarkModeSettings') || '{}');
 
 // ✅ Sort State - Default: Date Added (Newest First)
 let currentSort = localStorage.getItem('currentSort') || 'dateAdded';
@@ -121,42 +121,26 @@ let currentSort = localStorage.getItem('currentSort') || 'dateAdded';
     console.log('🚀 Starting PDF Library...');
     console.log(`📚 Initial pdfs.length = ${pdfs.length}`);
     
-    // ✅ عرض loading بسيط
-    showSyncLoading();
-    
-    await checkAndSyncBooksStorage(); // ✅ التحقق من BooksStorage عند البدء
-    
-    console.log(`📚 After checkAndSyncBooksStorage: pdfs.length = ${pdfs.length}`);
-    
-    // ✅ لا حاجة لإعادة تحميل pdfs - الدالة تعدل المتغير مباشرة
-    // pdfs تم تعديله داخل checkAndSyncBooksStorage() وهو نفس المرجع
-    
-    // ✅ إخفاء loading
-    hideSyncLoading();
-    
-    // ✅ حفظ الفلتر الحالي
-    const savedFilter = currentSort;
-    console.log(`💾 Saved filter: ${savedFilter}`);
-    
-    // ✅ تطبيق Random أولاً (لخلط الكتب)
-    console.log('🎲 Applying random shuffle first...');
-    currentSort = 'random';
-    sortPdfs();
-    
-    // ✅ ثم العودة للفلتر المحفوظ
-    setTimeout(() => {
-        console.log(`🔄 Restoring saved filter: ${savedFilter}`);
+    try {
+        await checkAndSyncBooksStorage();
+        console.log(`📚 After sync: pdfs.length = ${pdfs.length}`);
+        
+        const savedFilter = currentSort;
+        currentSort = 'random';
+        sortPdfs();
+        
         currentSort = savedFilter;
         applySavedFilter();
-        renderGrid();
-    }, 100); // تأخير بسيط للسماح بالخلط
-    
-    await renderGrid();
-    
-    // ✅ إخفاء Initial Loading Screen بعد انتهاء التحميل
-    hideInitialLoading();
-    
-    console.log('✅ PDF Library ready!');
+        await renderGrid();
+        
+        console.log('✅ PDF Library ready!');
+    } catch (error) {
+        console.error('❌ Error initializing app:', error);
+        alert('Error loading application: ' + error.message);
+    } finally {
+        // ✅ دائماً أخفي Loading Screen
+        hideInitialLoading();
+    }
 })();
 
 // ✅ عرض Loading بسيط عند فحص BooksStorage
@@ -448,8 +432,8 @@ const offlineIndicator = document.getElementById('offline-indicator');
 // Online/Offline Status
 let isOnline = navigator.onLine;
 
-// ✅ Theme System
-let currentTheme = localStorage.getItem('theme') || 'auto';
+// ✅ Theme System - Default: Dark
+let currentTheme = localStorage.getItem('theme') || 'dark';
 
 function applyTheme(theme) {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1317,15 +1301,11 @@ async function openViewer(filePath) {
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
                 }, 300);
-                
-                // Restore reading position after everything is loaded
+                  // Restore reading position after everything is loaded
                 restoreReadingPosition();
                 
-                // Apply invert colors state
-                if (isColorsInverted) {
-                    pdfPagesContainer.classList.add('inverted');
-                    invertColorsBtn?.classList.add('active');
-                }
+                // ✅ تطبيق Dark Mode المحفوظ لهذا PDF
+                applyPdfDarkMode();
                 
                 // Start auto-save
                 startAutoSave();
@@ -1909,15 +1889,30 @@ function closeViewer() {
 }
 
 // ============================================
-// Invert Colors Function
+// Dark Mode in PDF Viewer
 // ============================================
 
 function toggleInvertColors() {
-    if (!pdfPagesContainer) return;
+    if (!pdfPagesContainer || !currentPdfPath) return;
     
-    isColorsInverted = !isColorsInverted;
+    // ✅ تبديل Dark Mode
+    const isDarkMode = pdfPagesContainer.classList.toggle('inverted');
+    invertColorsBtn?.classList.toggle('active', isDarkMode);
     
-    if (isColorsInverted) {
+    // ✅ حفظ حالة Dark Mode لهذا الـ PDF
+    pdfDarkModeSettings[currentPdfPath] = isDarkMode;
+    localStorage.setItem('pdfDarkModeSettings', JSON.stringify(pdfDarkModeSettings));
+    
+    console.log(`🌙 Dark Mode ${isDarkMode ? 'ON' : 'OFF'} for: ${currentPdfPath}`);
+}
+
+// ✅ تطبيق Dark Mode المحفوظ عند فتح PDF
+function applyPdfDarkMode() {
+    if (!pdfPagesContainer || !currentPdfPath) return;
+    
+    const isDarkMode = pdfDarkModeSettings[currentPdfPath] || false;
+    
+    if (isDarkMode) {
         pdfPagesContainer.classList.add('inverted');
         invertColorsBtn?.classList.add('active');
     } else {
@@ -1925,8 +1920,7 @@ function toggleInvertColors() {
         invertColorsBtn?.classList.remove('active');
     }
     
-    // حفظ الحالة
-    localStorage.setItem('colorsInverted', isColorsInverted.toString());
+    console.log(`🌙 Applied saved Dark Mode (${isDarkMode}) for: ${currentPdfPath}`);
 }
 
 // ============================================
@@ -3982,11 +3976,184 @@ renameInput?.addEventListener('keydown', (e) => {
 });
 
 // ============================================
-// Initialize on Load
+// ✨ DRAG & DROP SUPPORT
 // ============================================
 
-// Load library on startup
-(async () => {
-    await renderGrid(); // ✅ استخدام renderGrid بدلاً من displayLibrary
-    console.log('✅ PDF Library initialized');
-})();
+// منع السلوك الافتراضي للمتصفح
+document.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+});
+
+document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+});
+
+// إضافة مؤشر بصري عند السحب فوق النافذة
+let dragCounter = 0;
+
+mainContainer?.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter++;
+    if (dragCounter === 1) {
+        mainContainer.classList.add('drag-active');
+        console.log('🎯 Drag entered - counter:', dragCounter);
+    }
+});
+
+mainContainer?.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter--;
+    if (dragCounter === 0) {
+        mainContainer.classList.remove('drag-active');
+        console.log('🎯 Drag left - counter:', dragCounter);
+    }
+});
+
+mainContainer?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+});
+
+// معالجة الملفات المسحوبة
+mainContainer?.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    dragCounter = 0;
+    mainContainer.classList.remove('drag-active');
+    
+    // ✅ التحقق من وجود ملفات
+    if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) {
+        console.warn('⚠️ No files dropped');
+        return;
+    }
+    
+    console.log('📥 Files dropped:', e.dataTransfer.files.length);
+    
+    // ✅ في Electron، الملفات لها خاصية path
+    const files = [];
+    for (let i = 0; i < e.dataTransfer.files.length; i++) {
+        const file = e.dataTransfer.files[i];
+        console.log(`File ${i}:`, {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            path: file.path || 'no path'
+        });
+        
+        // التحقق من نوع الملف
+        if (file.type === 'application/pdf' || 
+            (file.name && file.name.toLowerCase().endsWith('.pdf')) ||
+            (file.path && file.path.toLowerCase().endsWith('.pdf'))) {
+            files.push(file);
+        }
+    }
+    
+    if (files.length === 0) {
+        alert('⚠️ Please drop PDF files only');
+        return;
+    }
+    
+    console.log(`✅ Valid PDF files: ${files.length}`);
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    // إضافة الملفات إلى المكتبة
+    for (const file of files) {
+        try {
+            // ✅ الحصول على المسار الفعلي للملف
+            const filePath = file.path;
+            
+            if (!filePath) {
+                console.error('❌ File path not available. Electron webPreferences may need adjustment.');
+                errorCount++;
+                continue;
+            }
+            
+            console.log(`📄 Processing: ${filePath}`);
+            
+            // نسخ الملف إلى BooksStorage
+            const storagePath = await window.electronAPI.copyPdfToStorage(filePath);
+            
+            // التحقق من عدم وجود تكرار
+            if (!pdfs.some(p => p.path === storagePath)) {
+                const name = storagePath.split(/[\\/]/).pop();
+                pdfs.push({
+                    path: storagePath,
+                    name,
+                    read: false,
+                    dateAdded: Date.now(),
+                    addedAt: new Date().toISOString()
+                });
+                console.log(`✅ Added: ${name}`);
+                successCount++;
+            } else {
+                console.log(`⚠️ Already exists: ${file.name}`);
+            }
+        } catch (error) {
+            console.error(`❌ Error adding ${file.name}:`, error);
+            errorCount++;
+        }
+    }
+      if (successCount > 0) {
+        saveAndRender();
+        
+        // إظهار رسالة نجاح
+        const notification = document.createElement('div');
+        notification.className = 'drop-notification';
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <span>Added ${successCount} PDF${successCount > 1 ? 's' : ''} to library</span>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);    }
+    
+    if (errorCount > 0) {
+        alert(`⚠️ Failed to add ${errorCount} file${errorCount > 1 ? 's' : ''}. Check console for details.`);
+    }
+});
+
+// ============================================
+// ✨ OPEN EXTERNAL PDF FROM SYSTEM
+// ============================================
+
+// استقبال ملفات PDF من النظام (عند النقر المزدوج على ملف PDF)
+window.electronAPI.onOpenExternalPdf(async (filePath) => {
+    console.log(`📂 Opening external PDF: ${filePath}`);
+    
+    try {
+        // التحقق من وجود الملف
+        const exists = await window.electronAPI.checkFileExists(filePath);
+        if (!exists) {
+            alert('❌ File not found');
+            return;
+        }
+        
+        // فتح الملف مباشرة في واجهة القراءة
+        currentPdfPath = filePath;
+        lastOpenedPdf = null; // لأنه ليس من المكتبة
+        
+        // فتح الـ Viewer
+        viewerOverlay?.classList.remove('hidden');
+        mainContainer?.classList.add('hidden');
+        
+        // تحميل الـ PDF
+        await loadPdf(filePath);
+        
+        console.log('✅ External PDF opened successfully');
+    } catch (error) {
+        console.error('❌ Error opening external PDF:', error);
+        alert('Failed to open PDF: ' + error.message);
+    }
+});

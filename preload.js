@@ -18,5 +18,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     installUpdate: () => ipcRenderer.invoke('install-update'),
     onUpdateAvailable: (callback) => ipcRenderer.on('update-available', (_, info) => callback(info)),
     onDownloadProgress: (callback) => ipcRenderer.on('download-progress', (_, progress) => callback(progress)),
-    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', () => callback())
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', () => callback()),
+    // ✨ فتح PDF من النظام
+    onOpenExternalPdf: (callback) => ipcRenderer.on('open-external-pdf', (_, filePath) => callback(filePath))
 });
