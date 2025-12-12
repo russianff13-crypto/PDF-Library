@@ -1,6 +1,11 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+
+// ✅ Auto-updater configuration
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 // ✅ مجلد BooksStorage لتخزين نسخ الكتب
 const BOOKS_STORAGE_PATH = path.join(app.getPath('userData'), 'BooksStorage');
@@ -226,4 +231,80 @@ ipcMain.handle('maximize-window', (event) => {
 ipcMain.handle('close-window', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.close();
+});
+
+// ═══════════════════════════════════════════════════════════
+// 🔄 AUTO-UPDATER HANDLERS
+// ═══════════════════════════════════════════════════════════
+
+// Check for updates
+ipcMain.handle('check-for-updates', async () => {
+    try {
+        const result = await autoUpdater.checkForUpdates();
+        return {
+            success: true,
+            updateAvailable: result.updateInfo.version !== app.getVersion(),
+            currentVersion: app.getVersion(),
+            latestVersion: result.updateInfo.version,
+            releaseNotes: result.updateInfo.releaseNotes
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+});
+
+// Download update
+ipcMain.handle('download-update', async () => {
+    try {
+        await autoUpdater.downloadUpdate();
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// Install update
+ipcMain.handle('install-update', () => {
+    autoUpdater.quitAndInstall(false, true);
+});
+
+// Auto-updater events
+autoUpdater.on('update-available', (info) => {
+    console.log('🎉 Update available:', info.version);
+    BrowserWindow.getAllWindows().forEach(win => {
+        win.webContents.send('update-available', {
+            version: info.version,
+            releaseNotes: info.releaseNotes
+        });
+    });
+});
+
+autoUpdater.on('update-not-available', () => {
+    console.log('✅ App is up to date');
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    console.log(`📥 Download progress: ${Math.round(progressObj.percent)}%`);
+    BrowserWindow.getAllWindows().forEach(win => {
+        win.webContents.send('download-progress', {
+            percent: progressObj.percent,
+            bytesPerSecond: progressObj.bytesPerSecond,
+            transferred: progressObj.transferred,
+            total: progressObj.total
+        });
+    });
+});
+
+autoUpdater.on('update-downloaded', () => {
+    console.log('✅ Update downloaded');
+    BrowserWindow.getAllWindows().forEach(win => {
+        win.webContents.send('update-downloaded');
+    });
+});
+
+autoUpdater.on('error', (error) => {
+    console.error('❌ Update error:', error);
 });

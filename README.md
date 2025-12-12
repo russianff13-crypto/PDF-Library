@@ -201,4 +201,24 @@ Kitaku PDF Reader/
 
 ---
 
-## 🔍 استكشاف الأخطاء
+## 📄 License & Copyright
+
+**Copyright © 2025 Kitaku PDF Reader. All Rights Reserved.**
+
+This software is proprietary and confidential. Unauthorized copying, distribution, 
+modification, reverse engineering, or use of this software is strictly prohibited 
+without explicit written permission from the copyright holder.
+
+**See LICENSE file for full details.**
+
+---
+
+## 👨‍💻 Developer
+
+**Developed by:** Kitaku Team  
+**Version:** 2.0.0  
+**Release Date:** December 2025
+
+---
+
+**استمتع بقراءة PDF مع Kitaku! 📚✨**

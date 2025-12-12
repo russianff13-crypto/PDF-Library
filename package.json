@@ -5,15 +5,61 @@
   "description": "Modern PDF reader with advanced features",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "build:dir": "electron-builder --win --x64 --dir",
+    "dist": "electron-builder"
+  },  "keywords": ["pdf", "reader", "electron", "kitaku"],
+  "author": "Kitaku",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/russianff13-crypto/PDF-Library.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "build": {
+    "appId": "com.kitaku.pdfreader",
+    "productName": "Kitaku PDF Reader",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "icon.png",
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Kitaku PDF Reader",
+      "installerIcon": "icon.png",
+      "uninstallerIcon": "icon.png",
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "russianff13-crypto",
+      "repo": "PDF-Library"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "node_modules/pdfjs-dist/**/*"
+    ],
+    "extraResources": [],
+    "compression": "maximum",
+    "asar": true
+  },
   "devDependencies": {
-    "electron": "^33.2.0"
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
   },
   "dependencies": {
+    "electron-updater": "^6.3.9",
     "pdfjs-dist": "^4.9.155"
   }
 }

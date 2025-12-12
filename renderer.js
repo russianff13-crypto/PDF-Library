@@ -473,22 +473,29 @@ checkUpdateBtn?.addEventListener('click', async () => {
     
     showUpdateDialog('checking');
     
-    // Simulate update check (في الواقع سيتم الاتصال بـ GitHub API)
-    setTimeout(() => {
-        const currentVersion = '1.0.0';
-        const hasUpdate = false; // تغيير إلى true لتجربة التحديث
+    try {
+        const result = await window.electronAPI.checkForUpdates();
         
-        if (hasUpdate) {
+        if (!result.success) {
+            showUpdateDialog('error', { error: result.error });
+            return;
+        }
+        
+        if (result.updateAvailable) {
             showUpdateDialog('available', {
-                currentVersion: currentVersion,
-                latestVersion: '1.1.0'
+                currentVersion: result.currentVersion,
+                latestVersion: result.latestVersion,
+                releaseNotes: result.releaseNotes
             });
         } else {
             showUpdateDialog('up-to-date', {
-                currentVersion: currentVersion
+                currentVersion: result.currentVersion
             });
         }
-    }, 2000);
+    } catch (error) {
+        console.error('Update check error:', error);
+        showUpdateDialog('error', { error: error.message });
+    }
 });
 
 // Online/Offline detection

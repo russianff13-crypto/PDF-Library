@@ -11,5 +11,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getBooksFromStorage: () => ipcRenderer.invoke('get-books-from-storage'),
     minimize: () => ipcRenderer.invoke('minimize-window'),
     maximize: () => ipcRenderer.invoke('maximize-window'),
-    close: () => ipcRenderer.invoke('close-window')
+    close: () => ipcRenderer.invoke('close-window'),
+    // Auto-updater
+    checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+    downloadUpdate: () => ipcRenderer.invoke('download-update'),
+    installUpdate: () => ipcRenderer.invoke('install-update'),
+    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', (_, info) => callback(info)),
+    onDownloadProgress: (callback) => ipcRenderer.on('download-progress', (_, progress) => callback(progress)),
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', () => callback())
 });
