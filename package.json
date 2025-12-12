@@ -1,7 +1,7 @@
 {
   "name": "kitaku-pdf-reader",
   "productName": "Kitaku PDF Reader",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Modern PDF reader with advanced features",
   "main": "main.js",
   "scripts": {

@@ -1,5 +1,27 @@
 # 📋 Changelog - Kitaku PDF Reader
 
+## [2.0.1] - December 12, 2025
+
+### 🔧 Bug Fixes
+- ✅ **Auto-Update System:** Fixed dependency issues
+  - Disabled ASAR compression for node_modules
+  - Fixed `electron-updater` and `graceful-fs` errors
+  - Improved update check error messages
+  - Added friendly message when no releases available
+
+### 📦 Build Improvements
+- ✅ **NSIS Installer:** Fixed icon format requirements
+  - Added proper `.ico` file support
+  - Optimized build configuration
+  - Reduced installer size to ~96 MB
+
+### 🎯 Minor Improvements
+- ✅ Better error handling for offline mode
+- ✅ Improved GitHub integration
+- ✅ Updated documentation
+
+---
+
 ## [2.0.0] - December 12, 2025
 
 ### 🎨 Rebranding

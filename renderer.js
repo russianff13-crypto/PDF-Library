@@ -579,6 +579,43 @@ function showUpdateDialog(status, data = {}) {
             `;
             break;
             
+        case 'downloading':
+            content = `
+                <div class="update-content">
+                    <i class="fas fa-cloud-download-alt update-icon pulse"></i>
+                    <h3>Downloading Update...</h3>
+                    <div class="download-progress-container">
+                        <div class="download-progress-bar">
+                            <div class="download-progress-fill" style="width: ${data.percent || 0}%"></div>
+                        </div>
+                        <div class="download-stats">
+                            <span class="download-percent">${data.percent || 0}%</span>
+                            <span class="download-size">${data.downloadedMB || 0} MB / ${data.totalMB || 0} MB</span>
+                            <span class="download-speed">${data.speedMB || 0} MB/s</span>
+                        </div>
+                    </div>
+                    <p class="download-note">Please don't close the app while downloading...</p>
+                </div>
+            `;
+            break;
+            
+        case 'downloaded':
+            content = `
+                <div class="update-content">
+                    <i class="fas fa-check-circle update-icon success pulse"></i>
+                    <h3>Update Downloaded!</h3>
+                    <p>The update has been downloaded successfully.</p>
+                    <p class="update-note">The app will restart now to install the update.</p>
+                    <div class="update-actions">
+                        <button id="install-update-btn" class="btn-primary">
+                            <i class="fas fa-sync-alt"></i> Restart & Install
+                        </button>
+                    </div>
+                    <div class="countdown-timer">Restarting in <span id="countdown">5</span> seconds...</div>
+                </div>
+            `;
+            break;
+            
         case 'up-to-date':
             content = `
                 <div class="update-content">
@@ -598,7 +635,7 @@ function showUpdateDialog(status, data = {}) {
                     <i class="fas fa-wifi-slash update-icon error"></i>
                     <h3>No Internet Connection</h3>
                     <p>Unable to check for updates while offline.</p>
-                    <p class="update-current">Please connect to the internet and try again.</p>
+                    <p class="update-current">The app will work normally with your existing library.</p>
                     <div class="update-actions">
                         <button id="close-update-dialog-btn" class="btn-primary">OK</button>
                     </div>
@@ -611,7 +648,7 @@ function showUpdateDialog(status, data = {}) {
                 <div class="update-content">
                     <i class="fas fa-exclamation-circle update-icon error"></i>
                     <h3>Update Check Failed</h3>
-                    <p>Unable to check for updates. Please try again later.</p>
+                    <p>${data.error || 'Unable to check for updates. Please try again later.'}</p>
                     <div class="update-actions">
                         <button id="close-update-dialog-btn" class="btn-primary">OK</button>
                     </div>
@@ -632,14 +669,67 @@ function showUpdateDialog(status, data = {}) {
     const downloadBtn = document.getElementById('download-update-btn');
     downloadBtn?.addEventListener('click', async () => {
         downloadBtn.disabled = true;
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+        showUpdateDialog('downloading', { percent: 0, downloadedMB: 0, totalMB: 0, speedMB: 0 });
         
-        // Simulate download (في الواقع سيتم تنزيل التحديث)
-        setTimeout(() => {
-            downloadBtn.innerHTML = '<i class="fas fa-check"></i> Downloaded! Restart to install';
-        }, 3000);
+        const result = await window.electronAPI.downloadUpdate();
+        if (!result.success) {
+            showUpdateDialog('error', { error: result.error });
+        }
     });
+    
+    const installBtn = document.getElementById('install-update-btn');
+    if (installBtn) {
+        installBtn.addEventListener('click', () => {
+            window.electronAPI.installUpdate();
+        });
+        
+        // ✅ عد تنازلي تلقائي 5 ثوان
+        let countdown = 5;
+        const countdownEl = document.getElementById('countdown');
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdownEl) countdownEl.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.electronAPI.installUpdate();
+            }
+        }, 1000);
+    }
 }
+
+// ✅ استقبال events من main process
+
+// عند توفر تحديث
+window.electronAPI.onUpdateAvailable((info) => {
+    console.log('✅ Update available:', info);
+    const currentVersion = '2.0.1'; // النسخة الحالية
+    showUpdateDialog('available', {
+        currentVersion: currentVersion,
+        latestVersion: info.version,
+        releaseNotes: info.releaseNotes
+    });
+});
+
+// ✅ عند تقدم التحميل
+window.electronAPI.onDownloadProgress((progress) => {
+    const percent = Math.round(progress.percent);
+    const speedMB = (progress.bytesPerSecond / 1024 / 1024).toFixed(2);
+    const downloadedMB = (progress.transferred / 1024 / 1024).toFixed(2);
+    const totalMB = (progress.total / 1024 / 1024).toFixed(2);
+    
+    showUpdateDialog('downloading', {
+        percent: percent,
+        speedMB: speedMB,
+        downloadedMB: downloadedMB,
+        totalMB: totalMB
+    });
+});
+
+// ✅ عند اكتمال التحميل
+window.electronAPI.onUpdateDownloaded(() => {
+    showUpdateDialog('downloaded');
+});
 
 // ✅ Scroll listener for updating current page continuously
 viewerContent?.addEventListener('scroll', updateCurrentPage);
