@@ -480,7 +480,7 @@ checkUpdateBtn?.addEventListener('click', async () => {
             // رسالة خاصة إذا لم يوجد release على GitHub
             if (result.error && result.error.includes('404')) {
                 showUpdateDialog('error', { 
-                    error: 'No releases available yet. This is the latest development version (v2.0.0).' 
+                    error: 'No releases available yet. This is the latest development version (v2.0.1).' 
                 });
             } else {
                 showUpdateDialog('error', { error: result.error });
@@ -502,7 +502,7 @@ checkUpdateBtn?.addEventListener('click', async () => {
     } catch (error) {
         console.error('Update check error:', error);
         showUpdateDialog('error', { 
-            error: 'No releases available yet. This is the latest development version (v2.0.0).' 
+            error: 'No releases available yet. This is the latest development version (v2.0.1).' 
         });
     }
 });
@@ -713,16 +713,12 @@ window.electronAPI.onUpdateAvailable((info) => {
 
 // ✅ عند تقدم التحميل
 window.electronAPI.onDownloadProgress((progress) => {
-    const percent = Math.round(progress.percent);
-    const speedMB = (progress.bytesPerSecond / 1024 / 1024).toFixed(2);
-    const downloadedMB = (progress.transferred / 1024 / 1024).toFixed(2);
-    const totalMB = (progress.total / 1024 / 1024).toFixed(2);
-    
+    // البيانات تأتي جاهزة من main.js
     showUpdateDialog('downloading', {
-        percent: percent,
-        speedMB: speedMB,
-        downloadedMB: downloadedMB,
-        totalMB: totalMB
+        percent: progress.percent,
+        speedMB: progress.speedMB,
+        downloadedMB: progress.downloadedMB,
+        totalMB: progress.totalMB
     });
 });
 
