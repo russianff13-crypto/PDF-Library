@@ -7,13 +7,6 @@
 
 > تطبيق Electron متطور لإدارة وقراءة ملفات PDF مع واجهة أنيقة وميزات متقدمة.
 
-## 🔗 الروابط السريعة
-
-- 📘 **[دليل GitHub الكامل](GITHUB-COMPLETE-GUIDE.md)** - شرح مفصل لربط المشروع بـ GitHub
-- ⚡ **[مرجع GitHub السريع](GITHUB-QUICK-REFERENCE.md)** - أوامر سريعة للاستخدام اليومي
-- 📋 **[أوامر GitHub جاهزة](GITHUB-COMMANDS.md)** - أوامر جاهزة للنسخ واللصق
-- 🛠️ **[ملخص الإصلاحات](FINAL-FIXES-SUMMARY.md)** - جميع الإصلاحات المنفذة
-
 ---
 
 ## ✨ الميزات الرئيسية
@@ -52,16 +45,10 @@
 
 ### **التثبيت:**
 ```powershell
-# 1. Clone المشروع
-git clone https://github.com/YOUR-USERNAME/PDF-Library.git
-
-# 2. الانتقال للمجلد
-cd PDF-Library
-
-# 3. تثبيت Dependencies
+# 1. تثبيت Dependencies
 npm install
 
-# 4. تشغيل التطبيق
+# 2. تشغيل التطبيق
 npm start
 ```
 
@@ -212,116 +199,4 @@ PDF Library/
 
 ---
 
-## 📚 الوثائق
-
-### **دليل GitHub:**
-- 📘 **[GITHUB-COMPLETE-GUIDE.md](GITHUB-COMPLETE-GUIDE.md)** - دليل شامل لربط المشروع بـ GitHub
-  - إنشاء Repository
-  - إنشاء Personal Access Token
-  - رفع وتنزيل التحديثات
-  - حل المشاكل الشائعة
-  
-- ⚡ **[GITHUB-QUICK-REFERENCE.md](GITHUB-QUICK-REFERENCE.md)** - مرجع سريع للأوامر الأساسية
-
-- 📋 **[GITHUB-COMMANDS.md](GITHUB-COMMANDS.md)** - أوامر جاهزة للنسخ واللصق
-
-### **ملفات الإصلاحات:**
-- 🔄 **[DUPLICATE-FIX-ARABIC.md](DUPLICATE-FIX-ARABIC.md)** - إصلاح التكرار (عربي)
-- 🔄 **[DUPLICATE-FIX-COMPLETE.md](DUPLICATE-FIX-COMPLETE.md)** - إصلاح التكرار (إنجليزي)
-- 📁 **[BOOKSSTORAGE-AUTO-CREATE-FIX.md](BOOKSSTORAGE-AUTO-CREATE-FIX.md)** - إنشاء BooksStorage تلقائياً
-- 🗑️ **[DELETE-AND-FILTER-FIX.md](DELETE-AND-FILTER-FIX.md)** - الحذف النهائي والفلتر التلقائي
-- 🎲 **[RANDOM-SHUFFLE-ON-START.md](RANDOM-SHUFFLE-ON-START.md)** - خلط عشوائي عند البدء
-- 📝 **[FINAL-FIXES-SUMMARY.md](FINAL-FIXES-SUMMARY.md)** - ملخص شامل لجميع الإصلاحات
-
-### **وثائق تقنية:**
-- `NAVBAR-TOP-PAGE-COUNTER-UPDATE.md` - تحديث الـ navbar
-- `SMART-CLOSE-BUTTON-BEHAVIOR.md` - سلوك زر الإغلاق
-- `HIDE-TITLEBAR-IN-PDF-VIEWER.md` - إخفاء title-bar
-
----
-
-## 🐛 الإبلاغ عن مشاكل
-
-إذا واجهت أي مشاكل:
-1. تحقق من [قسم استكشاف الأخطاء](#-استكشاف-الأخطاء)
-2. راجع ملفات التوثيق
-3. أنشئ Issue على GitHub
-
----
-
-## 🚀 التطوير المستقبلي
-
-### **ميزات مخطط لها:**
-- [ ] تصدير إلى Word/Text
-- [ ] نظام Bookmarks متقدم
-- [ ] مزامنة Cloud
-- [ ] دعم Annotations
-- [ ] Search داخل PDF
-- [ ] Dark/Light Theme Toggle
-
----
-
-## 🤝 المساهمة
-
-### **كيفية المساهمة:**
-1. Fork المشروع
-2. أنشئ Branch جديد (`git checkout -b feature-amazing`)
-3. Commit التعديلات (`git commit -m 'Add amazing feature'`)
-4. Push للـ Branch (`git push origin feature-amazing`)
-5. افتح Pull Request
-
-### **معايير الكود:**
-- اتبع نمط الكود الموجود
-- أضف تعليقات واضحة
-- اختبر التغييرات قبل الـ Push
-
----
-
-## 📄 الترخيص
-
-MIT License - استخدم بحرية!
-
----
-
-## 👨‍💻 المطور
-
-**تم التطوير بواسطة:** فريق التطوير  
-**التاريخ:** ديسمبر 2025  
-**الإصدار:** 2.0.0  
-**GitHub:** [github.com/YOUR-USERNAME/PDF-Library](https://github.com/YOUR-USERNAME/PDF-Library)
-
----
-
-## 🎉 شكراً لاستخدامك PDF Library!
-
-إذا أعجبك التطبيق، لا تنسَ:
-- ⭐ إعطاء نجمة للمشروع على GitHub
-- 🐛 الإبلاغ عن أي مشاكل
-- 💡 اقتراح ميزات جديدة
-- 📖 قراءة [دليل GitHub](GITHUB-COMPLETE-GUIDE.md) لربط المشروع
-
-**استمتع بقراءة PDF!** 📚✨
-
----
-
-## 📋 الملفات الهامة
-
-```
-PDF Library/
-├── 📘 README.md                              # هذا الملف
-├── 📁 GITHUB-COMPLETE-GUIDE.md              # دليل GitHub الشامل
-├── ⚡ GITHUB-QUICK-REFERENCE.md             # مرجع سريع
-├── 📋 GITHUB-COMMANDS.md                    # أوامر جاهزة
-├── 🛠️ FINAL-FIXES-SUMMARY.md               # ملخص الإصلاحات
-├── 🔄 DUPLICATE-FIX-ARABIC.md               # إصلاح التكرار
-├── 📁 BOOKSSTORAGE-AUTO-CREATE-FIX.md       # إنشاء BooksStorage
-├── 🗑️ DELETE-AND-FILTER-FIX.md             # الحذف والفلتر
-├── 🎲 RANDOM-SHUFFLE-ON-START.md            # Random Shuffle
-├── 🚫 .gitignore                            # ملفات Git المستبعدة
-├── 📦 package.json                          # Dependencies
-├── ⚙️ main.js                               # Main Process
-├── 🔌 preload.js                            # Preload Scripts
-├── 🎨 renderer.js                           # Renderer Process
-├── 🌐 index.html                            # UI Structure
-└── 💅 style.css                             # Styling
-```
+## 🔍 استكشاف الأخطاء
