@@ -477,7 +477,14 @@ checkUpdateBtn?.addEventListener('click', async () => {
         const result = await window.electronAPI.checkForUpdates();
         
         if (!result.success) {
-            showUpdateDialog('error', { error: result.error });
+            // رسالة خاصة إذا لم يوجد release على GitHub
+            if (result.error && result.error.includes('404')) {
+                showUpdateDialog('error', { 
+                    error: 'No releases available yet. This is the latest development version (v2.0.0).' 
+                });
+            } else {
+                showUpdateDialog('error', { error: result.error });
+            }
             return;
         }
         
@@ -494,7 +501,9 @@ checkUpdateBtn?.addEventListener('click', async () => {
         }
     } catch (error) {
         console.error('Update check error:', error);
-        showUpdateDialog('error', { error: error.message });
+        showUpdateDialog('error', { 
+            error: 'No releases available yet. This is the latest development version (v2.0.0).' 
+        });
     }
 });
 
