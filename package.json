@@ -1,7 +1,8 @@
 {
-  "name": "pdf-library",
-  "version": "1.0.0",
-  "description": "A movie-style PDF viewer",
+  "name": "kitaku-pdf-reader",
+  "productName": "Kitaku PDF Reader",
+  "version": "2.0.0",
+  "description": "Modern PDF reader with advanced features",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

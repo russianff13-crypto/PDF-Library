@@ -16,6 +16,7 @@ function createWindow() {
         width: 1200,
         height: 800,
         frame: false, // Frameless window
+        icon: path.join(__dirname, 'icon.png'), // App icon
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -23,7 +24,8 @@ function createWindow() {
             webSecurity: false
         },
         backgroundColor: '#1a1a1a',
-        show: false
+        show: false,
+        title: 'Kitaku PDF Reader'
     });
 
     win.maximize(); // Start maximized

@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Library</title>
+    <title>Kitaku PDF Reader</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: file: https://cdnjs.cloudflare.com;">
 </head>
 <body>
     <div id="title-bar">
-        <div class="app-title"><i class="fas fa-book"></i> PDF Reader</div>
+        <div class="app-title">
+            <img src="iconTrans.png" alt="Kitaku" class="app-icon">
+            <span>Kitaku PDF Reader</span>
+        </div>
         <div class="window-controls">
             <button id="settings-btn" class="settings-btn-title" title="Settings">
                 <i class="fas fa-cog"></i>
@@ -37,7 +40,7 @@
                 <i class="fas fa-info-circle"></i>
                 <div class="settings-item-content">
                     <span>About</span>
-                    <small>Version 1.0.0</small>
+                    <small>Kitaku PDF Reader v2.0.0</small>
                 </div>
             </div>
         </div>
@@ -57,8 +60,8 @@
     <!-- ✅ Initial Loading Screen -->
     <div id="initial-loading" class="initial-loading">
         <div class="loading-content">
-            <i class="fas fa-book-open loading-icon"></i>
-            <div class="loading-text">Loading Library...</div>
+            <img src="iconTrans.png" alt="Kitaku" class="loading-icon-img">
+            <div class="loading-text">Loading Kitaku...</div>
             <div class="loading-spinner"></div>
         </div>
     </div>

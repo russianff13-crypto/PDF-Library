@@ -1,4 +1,4 @@
-# 📚 PDF Library - Modern Electron App
+# 📚 Kitaku PDF Reader - Modern Electron App
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Status](https://img.shields.io/badge/status-stable-green)
@@ -72,7 +72,7 @@ npm start
 ### **الواجهة الرئيسية (المكتبة):**
 ```
 ┌─────────────────────────────────────────────┐
-│ PDF Library              [⚙️] [_] [□] [✕]  │
+│ Kitaku PDF Reader        [⚙️] [_] [□] [✕]  │
 ├─────────────────────────────────────────────┤
 │                                             │
 │         📚 My Library                       │
@@ -131,7 +131,9 @@ npm start
 
 ### **الهيكل:**
 ```
-PDF Library/
+Kitaku PDF Reader/
+├── icon.png          # App Icon
+├── iconTrans.png     # Transparent Icon
 ├── main.js           # Electron Main Process
 ├── preload.js        # Preload Scripts
 ├── renderer.js       # Renderer Process
