@@ -27,10 +27,9 @@ function createWindow() {
             nodeIntegration: false,
             contextIsolation: true,
             webSecurity: false
-        },
-        backgroundColor: '#1a1a1a',
+        },        backgroundColor: '#1a1a1a',
         show: false,
-        title: 'Kitaku PDF Reader'
+        title: 'Kita PDF Reader'
     });
 
     win.maximize(); // Start maximized
@@ -266,8 +265,12 @@ ipcMain.handle('download-update', async () => {
     }
 });
 
-// Install update
+// ✅ IPC Handler: تثبيت التحديث وإعادة التشغيل
 ipcMain.handle('install-update', () => {
+    console.log('🔄 Installing update and restarting...');
+    // quitAndInstall(isSilent, isForceRunAfter)
+    // false = show update installation
+    // true = force restart after install
     autoUpdater.quitAndInstall(false, true);
 });
 

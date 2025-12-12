@@ -205,7 +205,8 @@ body {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(100, 100, 100, 0.5);
     border-radius: 12px;
-    min-width: 260px;
+    min-width: 320px;
+    max-width: 360px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
     z-index: 2500;
     animation: slideInFromTop 0.3s ease;
@@ -259,6 +260,79 @@ body {
     padding: 0.5rem 0;
 }
 
+/* Settings Section */
+.settings-section {
+    padding: 0.5rem 0;
+}
+
+.settings-section-title {
+    padding: 0.8rem 1.2rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.settings-section-title i {
+    font-size: 0.9rem;
+}
+
+/* Theme Selector */
+.theme-selector {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem 1rem;
+}
+
+.theme-option {
+    flex: 1;
+    background: rgba(40, 40, 40, 0.6);
+    border: 2px solid rgba(80, 80, 80, 0.3);
+    border-radius: 10px;
+    padding: 1rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: #999;
+}
+
+.theme-option:hover {
+    background: rgba(50, 50, 50, 0.8);
+    border-color: rgba(100, 100, 100, 0.5);
+    color: #fff;
+}
+
+.theme-option.active {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.theme-option i {
+    font-size: 1.3rem;
+}
+
+.theme-option span {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.theme-option small {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.theme-option.active small {
+    color: #888;
+}
+
 .settings-item {
     padding: 0.9rem 1.2rem;
     display: flex;
@@ -285,6 +359,11 @@ body {
     flex-direction: column;
     gap: 0.2rem;
     flex: 1;
+}
+
+.settings-item-content span {
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .settings-item small {
@@ -314,6 +393,51 @@ body {
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9);
     z-index: 3000;
     animation: scaleIn 0.3s ease;
+}
+
+/* ✅ About Dialog Styles */
+.about-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.3));
+}
+
+.about-version {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+}
+
+.about-description {
+    font-size: 1rem;
+    color: #bbb;
+    margin-bottom: 2rem;
+}
+
+.about-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(40, 40, 40, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(80, 80, 80, 0.3);
+}
+
+.about-info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.about-info-item i {
+    color: var(--accent-primary);
+    font-size: 1.1rem;
 }
 
 .update-content {

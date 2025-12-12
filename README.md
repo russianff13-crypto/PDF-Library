@@ -1,4 +1,4 @@
-# 📚 Kitaku PDF Reader - Modern Electron App
+# 📚 Kita PDF Reader - Modern Electron App
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Status](https://img.shields.io/badge/status-stable-green)
@@ -72,7 +72,7 @@ npm start
 ### **الواجهة الرئيسية (المكتبة):**
 ```
 ┌─────────────────────────────────────────────┐
-│ Kitaku PDF Reader        [⚙️] [_] [□] [✕]  │
+│ Kita PDF Reader          [⚙️] [_] [□] [✕]  │
 ├─────────────────────────────────────────────┤
 │                                             │
 │         📚 My Library                       │
@@ -131,7 +131,7 @@ npm start
 
 ### **الهيكل:**
 ```
-Kitaku PDF Reader/
+Kita PDF Reader/
 ├── icon.png          # App Icon
 ├── iconTrans.png     # Transparent Icon
 ├── main.js           # Electron Main Process
@@ -203,7 +203,7 @@ Kitaku PDF Reader/
 
 ## 📄 License & Copyright
 
-**Copyright © 2025 Kitaku PDF Reader. All Rights Reserved.**
+**Copyright © 2025 Kita PDF Reader. All Rights Reserved.**
 
 This software is proprietary and confidential. Unauthorized copying, distribution, 
 modification, reverse engineering, or use of this software is strictly prohibited 
@@ -215,10 +215,10 @@ without explicit written permission from the copyright holder.
 
 ## 👨‍💻 Developer
 
-**Developed by:** Kitaku Team  
-**Version:** 2.0.0  
+**Developed by:** Kita Team  
+**Version:** 2.0.1  
 **Release Date:** December 2025
 
 ---
 
-**استمتع بقراءة PDF مع Kitaku! 📚✨**
+**استمتع بقراءة PDF مع Kita! 📚✨**

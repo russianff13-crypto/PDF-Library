@@ -1,6 +1,6 @@
 {
-  "name": "kitaku-pdf-reader",
-  "productName": "Kitaku PDF Reader",
+  "name": "kita-pdf-reader",
+  "productName": "Kita PDF Reader",
   "version": "2.0.1",
   "description": "Modern PDF reader with advanced features",
   "main": "main.js",
@@ -12,19 +12,17 @@
   },
   "keywords": [
     "pdf",
-    "reader",
-    "electron",
-    "kitaku"
+    "reader",    "electron",
+    "kita"
   ],
-  "author": "Kitaku",
+  "author": "Kita",
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
     "url": "https://github.com/russianff13-crypto/PDF-Library.git"
-  },
-  "build": {
-    "appId": "com.kitaku.pdfreader",
-    "productName": "Kitaku PDF Reader",    "win": {
+  },  "build": {
+    "appId": "com.kita.pdfreader",
+    "productName": "Kita PDF Reader",    "win": {
       "target": [
         {
           "target": "nsis",
@@ -39,10 +37,9 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
+      "allowToChangeInstallationDirectory": true,      "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Kitaku PDF Reader",
+      "shortcutName": "Kita PDF Reader",
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
       "deleteAppDataOnUninstall": false

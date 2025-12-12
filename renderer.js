@@ -431,16 +431,67 @@ sortPdfs();
 // Settings & Offline Mode
 // ============================================
 
+// ============================================
+// Settings & Theme System
+// ============================================
+
 // Settings Elements
 const settingsBtn = document.getElementById('settings-btn');
 const settingsMenu = document.getElementById('settings-menu');
 const closeSettingsBtn = document.getElementById('close-settings-btn');
 const checkUpdateBtn = document.getElementById('check-update-btn');
+const aboutBtn = document.getElementById('about-btn');
+const aboutDialog = document.getElementById('about-dialog');
 const updateDialog = document.getElementById('update-dialog');
 const offlineIndicator = document.getElementById('offline-indicator');
 
 // Online/Offline Status
 let isOnline = navigator.onLine;
+
+// ✅ Theme System
+let currentTheme = localStorage.getItem('theme') || 'auto';
+
+function applyTheme(theme) {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (theme === 'auto') {
+        document.body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        document.body.setAttribute('data-theme', theme);
+    }
+    
+    // Update active theme button
+    document.querySelectorAll('.theme-option').forEach(btn => {
+        if (btn.dataset.theme === theme) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    currentTheme = theme;
+    localStorage.setItem('theme', theme);
+    console.log(`🎨 Theme applied: ${theme}`);
+}
+
+// Theme selection buttons
+document.querySelectorAll('.theme-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const theme = btn.dataset.theme;
+        applyTheme(theme);
+    });
+});
+
+// Listen to system theme changes (for auto mode)
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (currentTheme === 'auto') {
+        document.body.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        console.log(`🎨 System theme changed: ${e.matches ? 'dark' : 'light'}`);
+    }
+});
+
+// Initialize theme on startup
+applyTheme(currentTheme);
 
 // Initialize offline mode
 initializeOfflineMode();
@@ -460,6 +511,17 @@ document.addEventListener('click', (e) => {
     if (!settingsMenu?.contains(e.target) && e.target !== settingsBtn) {
         settingsMenu?.classList.add('hidden');
     }
+});
+
+// About button
+aboutBtn?.addEventListener('click', () => {
+    settingsMenu?.classList.add('hidden');
+    aboutDialog?.classList.remove('hidden');
+});
+
+// Close about dialog
+document.getElementById('close-about-btn')?.addEventListener('click', () => {
+    aboutDialog?.classList.add('hidden');
 });
 
 // Check for updates
