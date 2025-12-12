@@ -640,20 +640,24 @@ function showUpdateDialog(status, data = {}) {
                 </div>
             `;
             break;
+              case 'downloading':
+            const percent = Math.min(99, Math.round((data.percent || 0) * 10) / 10); // حد أقصى 99% وتقريب لرقم عشري واحد
+            const speedMB = (data.speedMB || 0).toFixed(2);
+            const downloadedMB = (data.downloadedMB || 0).toFixed(1);
+            const totalMB = (data.totalMB || 0).toFixed(1);
             
-        case 'downloading':
             content = `
                 <div class="update-content">
                     <i class="fas fa-cloud-download-alt update-icon pulse"></i>
                     <h3>Downloading Update...</h3>
                     <div class="download-progress-container">
                         <div class="download-progress-bar">
-                            <div class="download-progress-fill" style="width: ${data.percent || 0}%"></div>
+                            <div class="download-progress-fill" style="width: ${percent}%"></div>
                         </div>
                         <div class="download-stats">
-                            <span class="download-percent">${data.percent || 0}%</span>
-                            <span class="download-size">${data.downloadedMB || 0} MB / ${data.totalMB || 0} MB</span>
-                            <span class="download-speed">${data.speedMB || 0} MB/s</span>
+                            <span class="download-percent">${percent}%</span>
+                            <span class="download-size">${downloadedMB} MB / ${totalMB} MB</span>
+                            <span class="download-speed">${speedMB} MB/s</span>
                         </div>
                     </div>
                     <p class="download-note">Please don't close the app while downloading...</p>
@@ -765,7 +769,7 @@ function showUpdateDialog(status, data = {}) {
 // عند توفر تحديث
 window.electronAPI.onUpdateAvailable((info) => {
     console.log('✅ Update available:', info);
-    const currentVersion = '2.0.1'; // النسخة الحالية
+    const currentVersion = '2.0.2'; // النسخة الحالية
     showUpdateDialog('available', {
         currentVersion: currentVersion,
         latestVersion: info.version,

@@ -290,13 +290,19 @@ autoUpdater.on('update-not-available', () => {
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
-    console.log(`📥 Download progress: ${Math.round(progressObj.percent)}%`);
+    const percent = Math.round(progressObj.percent * 10) / 10; // تقريب لرقم عشري واحد
+    const speedMB = (progressObj.bytesPerSecond / 1024 / 1024).toFixed(2);
+    const downloadedMB = (progressObj.transferred / 1024 / 1024).toFixed(2);
+    const totalMB = (progressObj.total / 1024 / 1024).toFixed(2);
+    
+    console.log(`📥 Download progress: ${percent}% - ${speedMB} MB/s`);
+    
     BrowserWindow.getAllWindows().forEach(win => {
         win.webContents.send('download-progress', {
-            percent: progressObj.percent,
-            bytesPerSecond: progressObj.bytesPerSecond,
-            transferred: progressObj.transferred,
-            total: progressObj.total
+            percent: percent,
+            speedMB: parseFloat(speedMB),
+            downloadedMB: parseFloat(downloadedMB),
+            totalMB: parseFloat(totalMB)
         });
     });
 });

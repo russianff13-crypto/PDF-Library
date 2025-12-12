@@ -33,15 +33,15 @@
       "icon": "icon.ico",
       "artifactName": "${productName}-Setup-${version}.${ext}",
       "requestedExecutionLevel": "asInvoker"
-    },
-    "nsis": {
+    },    "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,      "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Kita PDF Reader",
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "differentialPackage": true
     },
     "publish": {
       "provider": "github",
