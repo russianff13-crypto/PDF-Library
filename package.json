@@ -1,7 +1,6 @@
-{
-  "name": "kita-pdf-reader",
+{  "name": "kita-pdf-reader",
   "productName": "Kita PDF Reader",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Modern PDF reader with advanced features",
   "main": "main.js",
   "scripts": {

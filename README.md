@@ -1,6 +1,6 @@
 # 📚 Kita PDF Reader - Modern Electron App
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.2-blue)
 ![Status](https://img.shields.io/badge/status-stable-green)
 ![Electron](https://img.shields.io/badge/electron-latest-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -146,6 +146,21 @@ Kita PDF Reader/
 
 ## 📝 التحديثات الأخيرة
 
+### **الإصدار 2.0.2 - ديسمبر 2025** 🎉
+
+#### **تحسينات الإصدار:**
+- ✅ **Version Update:** تحديث رقم الإصدار للتوافق مع GitHub Releases
+- ✅ **Documentation:** تحديث الوثائق والـ README
+- ✅ **Stability:** إصلاحات طفيفة وتحسينات الأداء
+
+### **الإصدار 2.0.1 - ديسمبر 2025** 🎨
+
+#### **ميزات جديدة:**
+- ✅ **نظام Themes متقدم:** Auto/Light/Dark مع حفظ تلقائي
+- ✅ **قائمة Settings محسّنة:** Appearance + Application sections
+- ✅ **About Dialog:** معلومات التطبيق والمطور
+- ✅ **إعادة تشغيل تلقائية:** بعد تحميل التحديث (5 ثوان)
+
 ### **الإصدار 2.0.0 - ديسمبر 2025** 🎉
 
 #### **إصلاحات رئيسية:**
@@ -216,7 +231,7 @@ without explicit written permission from the copyright holder.
 ## 👨‍💻 Developer
 
 **Developed by:** Kita Team  
-**Version:** 2.0.1  
+**Version:** 2.0.2  
 **Release Date:** December 2025
 
 ---
