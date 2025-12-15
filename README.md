@@ -245,7 +245,7 @@ without explicit written permission from the copyright holder.
 ## 👨‍💻 Developer
 
 **Developed by:** Kita Team  
-**Version:** 2.0.2  
+**Version:** 2.2.1  
 **Release Date:** December 2025
 
 ---
