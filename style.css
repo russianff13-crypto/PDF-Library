@@ -3942,3 +3942,90 @@ body[data-theme="light"] .drop-notification {
 body[data-theme="dark"] .drop-notification {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
+
+/* ════════════════════════════════════════════════════════
+   🎯 DYNAMIC BANNER STYLES
+   ════════════════════════════════════════════════════════ */
+
+.banner-container {
+    position: fixed;
+    top: 32px; /* بعد title bar */
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+    transition: var(--transition);
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+.banner-container.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.banner-container.hidden {
+    display: none;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.banner-image:hover {
+    opacity: 0.9;
+}
+
+.close-banner-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition-fast);
+    backdrop-filter: blur(4px);
+}
+
+.banner-container:hover .close-banner-btn {
+    opacity: 1;
+}
+
+.close-banner-btn:hover {
+    background: rgba(220, 38, 38, 0.9);
+    transform: scale(1.1);
+}
+
+/* Adjust content position when banner is visible */
+body.banner-visible .container {
+    margin-top: 80px;
+    height: calc(100vh - 32px - 80px);
+}
+
+body.banner-visible #pdf-container {
+    top: calc(32px + 80px);
+}
+
+/* ════════════════════════════════════════════════════════
+   END DYNAMIC BANNER STYLES
+   ════════════════════════════════════════════════════════ */

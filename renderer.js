@@ -1,4 +1,105 @@
-﻿// Import PDF.js
+﻿// ════════════════════════════════════════════════════════
+// 🎯 DYNAMIC BANNER SYSTEM
+// ════════════════════════════════════════════════════════
+
+const BANNER_URL = 'https://raw.githubusercontent.com/russianff13-crypto/PDF-Library/main/banner.jpg';
+const BANNER_CACHE_KEY = 'cached_banner_image';
+const BANNER_CLOSED_KEY = 'banner_closed';
+const BANNER_LAST_CHECK = 'banner_last_check';
+
+async function loadBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    const bannerImage = document.getElementById('banner-image');
+    const closeBannerBtn = document.getElementById('close-banner');
+    
+    // تحقق إذا المستخدم أغلق البنر قبل كذا
+    const bannerClosed = localStorage.getItem(BANNER_CLOSED_KEY);
+    if (bannerClosed === 'true') {
+        console.log('📢 Banner was closed by user, not showing');
+        return;
+    }
+    
+    try {
+        // محاولة تحميل البنر من GitHub
+        console.log('📡 Fetching banner from GitHub...');
+        
+        const response = await fetch(BANNER_URL, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            
+            // حفظ البنر في localStorage كـ base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                localStorage.setItem(BANNER_CACHE_KEY, reader.result);
+                localStorage.setItem(BANNER_LAST_CHECK, Date.now().toString());
+                console.log('✅ Banner cached successfully');
+            };
+            reader.readAsDataURL(blob);
+            
+            // عرض البنر
+            bannerImage.src = imageUrl;
+            showBanner();
+            
+            console.log('✅ Banner loaded from GitHub');
+        } else {
+            throw new Error('Failed to fetch banner');
+        }
+    } catch (error) {
+        console.warn('⚠️ Could not fetch banner from GitHub:', error.message);
+        
+        // تحميل البنر المحفوظ من cache
+        const cachedBanner = localStorage.getItem(BANNER_CACHE_KEY);
+        if (cachedBanner) {
+            bannerImage.src = cachedBanner;
+            showBanner();
+            console.log('✅ Loaded cached banner');
+        } else {
+            console.log('ℹ️ No cached banner available');
+        }
+    }
+    
+    // زر إغلاق البنر
+    closeBannerBtn?.addEventListener('click', () => {
+        hideBanner();
+        localStorage.setItem(BANNER_CLOSED_KEY, 'true');
+        console.log('📢 Banner closed by user');
+    });
+    
+    // النقر على البنر (اختياري - يمكن فتح رابط)
+    bannerImage?.addEventListener('click', () => {
+        // يمكنك إضافة رابط هنا إذا تريد
+        console.log('🖱️ Banner clicked');
+    });
+}
+
+function showBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    bannerContainer.classList.add('show');
+    bannerContainer.classList.remove('hidden');
+    document.body.classList.add('banner-visible');
+}
+
+function hideBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    bannerContainer.classList.remove('show');
+    setTimeout(() => {
+        bannerContainer.classList.add('hidden');
+        document.body.classList.remove('banner-visible');
+    }, 300);
+}
+
+// ════════════════════════════════════════════════════════
+// END DYNAMIC BANNER SYSTEM
+// ════════════════════════════════════════════════════════
+
+// Import PDF.js
 import * as pdfjsLib from './node_modules/pdfjs-dist/build/pdf.mjs';
 
 // Set up worker
@@ -147,6 +248,9 @@ let currentSort = localStorage.getItem('currentSort') || 'dateAdded';
         // ✅ دائماً أخفي Loading Screen
         hideInitialLoading();
     }
+    
+    // ✅ تحميل البنر الديناميكي
+    loadBanner();
 })();
 
 // ✅ عرض Loading بسيط عند فحص BooksStorage
@@ -2705,37 +2809,37 @@ function createHighlightCanvas(pageElement) {
         const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
         
         // استعادة الحالة السابقة (لإزالة المستطيل المؤقت)
-        if (savedImageData) {
+        إذا كان savedImageData) {
             ctx.putImageData(savedImageData, 0, 0);
         }
         
-        if (isHighlightMode) {
+        إذا كان isHighlightMode) {
             // ✅ رسم إطار المستطيل فقط (مؤقت)
             drawRectangleOutline(ctx, startX, startY, currentX, currentY, currentHighlightColor);
-        } else if (isEraserMode) {
+        } else إذا كان isEraserMode) {
             // ✅ الممحاة الذكية - حذف المستطيلات المحددة فوراً عند اللمس
             eraseHighlight(ctx, currentX, currentY, pageNum, true);
         }
     });
     
     canvas.addEventListener('mouseup', (e) => {
-        if (!isDrawing) return;
+        إذا كان !isDrawing) return;
         
         const rect = canvas.getBoundingClientRect();
         const endX = (e.clientX - rect.left) * (canvas.width / rect.width);
         const endY = (e.clientY - rect.top) * (canvas.height / rect.height);
         
         // استعادة الحالة السابقة
-        if (savedImageData) {
+        إذا كان savedImageData) {
             ctx.putImageData(savedImageData, 0, 0);
         }
         
-        if (isHighlightMode) {
+        إذا كان isHighlightMode) {
             // التحقق من أن المستطيل ليس صغيراً جداً
             const width = Math.abs(endX - startX);
             const height = Math.abs(endY - startY);
             
-            if (width > 5 && height > 5) {
+            إذا كان width > 5 && height > 5) {
                 // ✅ حساب إحداثيات المستطيل
                 const rectBounds = {
                     x: Math.min(startX, endX),
@@ -2762,12 +2866,12 @@ function createHighlightCanvas(pageElement) {
     });
     
     canvas.addEventListener('mouseleave', () => {
-        if (isDrawing) {
+        إذا كان isDrawing) {
             isDrawing = false;
             savedImageData = null;
             lastDeletedHighlightId = null; // إعادة تعيين
             // حذف المستطيل المؤقت
-            if (savedImageData) {
+            إذا كان savedImageData) {
                 ctx.putImageData(savedImageData, 0, 0);
             }
         }
@@ -2840,7 +2944,7 @@ let lastDeletedHighlightId = null; // لتجنب الحذف المتكرر لن�
 
 function eraseHighlight(ctx, x, y, pageNum, isMoving = false) {
     // التحقق من وجود تحديدات في الصفحة
-    if (!currentPdfPath || !highlights[currentPdfPath]?.[pageNum]) {
+    إذا كان !currentPdfPath || !highlights[currentPdfPath]?.[pageNum]) {
         // لا توجد تحديدات - استخدام المسح العادي
         ctx.save();
         ctx.globalCompositeOperation = 'destination-out';
@@ -2863,7 +2967,7 @@ function eraseHighlight(ctx, x, y, pageNum, isMoving = false) {
         const highlightData = highlightsToCheck[i];
         const rect = highlightData.rect;
         
-        if (rect && x >= rect.x && x <= rect.x + rect.width &&
+        إذا كان rect && x >= rect.x && x <= rect.x + rect.width &&
             y >= rect.y && y <= rect.y + rect.height) {
             foundHighlight = highlightData;
             foundIndex = i;
@@ -2871,9 +2975,9 @@ function eraseHighlight(ctx, x, y, pageNum, isMoving = false) {
         }
     }
     
-    if (foundHighlight && foundIndex !== -1) {
+    إذا كان foundHighlight && foundIndex !== -1) {
         // ✅ تجنب حذف نفس التحديد مرتين في نفس الحركة
-        if (isMoving && lastDeletedHighlightId === foundHighlight.id) {
+        إذا كان isMoving && lastDeletedHighlightId === foundHighlight.id) {
             return;
         }
         
@@ -2881,11 +2985,11 @@ function eraseHighlight(ctx, x, y, pageNum, isMoving = false) {
         lastDeletedHighlightId = foundHighlight.id;
         
         // ✅ حذف التحديد المحدد
-        if (Array.isArray(highlightDataArray)) {
+        إذا كان Array.isArray(highlightDataArray)) {
             highlightDataArray.splice(foundIndex, 1);
             
             // إذا أصبحت القائمة فارغة، احذف الصفحة
-            if (highlightDataArray.length === 0) {
+            إذا كان highlightDataArray.length === 0) {
                 delete highlights[currentPdfPath][pageNum];
             }
         } else {
@@ -2898,12 +3002,12 @@ function eraseHighlight(ctx, x, y, pageNum, isMoving = false) {
         // إعادة رسم جميع التحديدات المتبقية
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         
-        if (Array.isArray(highlightDataArray) && highlightDataArray.length > 0) {
+        إذا كان Array.isArray(highlightDataArray) && highlightDataArray.length > 0) {
             highlightDataArray.forEach(highlightData => {
                 const rect = highlightData.rect;
                 const color = highlightData.color || currentHighlightColor;
                 
-                if (rect) {
+                إذا كان rect) {
                     drawFilledRectangle(ctx, rect.x, rect.y, 
                         rect.x + rect.width, 
                         rect.y + rect.height, 
@@ -2927,7 +3031,7 @@ function eraseHighlight(ctx, x, y, pageNum, isMoving = false) {
 }
 
 function savePageHighlight(canvas, pageNum, rectBounds = null, note = '') {
-    if (!currentPdfPath) return;
+    إذا كان !currentPdfPath) return;
     
     const highlightDataURL = canvas.toDataURL();
     
@@ -2936,12 +3040,12 @@ function savePageHighlight(canvas, pageNum, rectBounds = null, note = '') {
     const pdfCanvas = pageElement?.querySelector('canvas:not(.highlight-canvas)');
     const pdfDataURL = pdfCanvas ? pdfCanvas.toDataURL() : null;
     
-    if (!highlights[currentPdfPath]) {
+    إذا كان !highlights[currentPdfPath]) {
         highlights[currentPdfPath] = {};
     }
     
     // ✅ دعم تحديدات متعددة في نفس الصفحة
-    if (!highlights[currentPdfPath][pageNum]) {
+    إذا كان !highlights[currentPdfPath][pageNum]) {
         highlights[currentPdfPath][pageNum] = [];
     }
     
@@ -2950,7 +3054,7 @@ function savePageHighlight(canvas, pageNum, rectBounds = null, note = '') {
     
     // ✅ حفظ الإحداثيات كنسب مئوية (0-1) بدلاً من pixels
     let normalizedRect = null;
-    if (rectBounds && canvas.width > 0 && canvas.height > 0) {
+    إذا كان rectBounds && canvas.width > 0 && canvas.height > 0) {
         normalizedRect = {
             x: rectBounds.x / canvas.width,
             y: rectBounds.y / canvas.height,
@@ -2983,7 +3087,7 @@ function savePageHighlight(canvas, pageNum, rectBounds = null, note = '') {
     });
     
     // Keep history size manageable
-    if (highlightHistory.length > MAX_HISTORY) {
+    إذا كان highlightHistory.length > MAX_HISTORY) {
         highlightHistory.shift();
     }
     
@@ -2993,24 +3097,24 @@ function savePageHighlight(canvas, pageNum, rectBounds = null, note = '') {
     localStorage.setItem('pdfHighlights', JSON.stringify(highlights));
     
     // ✅ تحديث قائمة الـ Highlights إذا كانت مفتوحة
-    if (!highlightsSidebar?.classList.contains('hidden')) {
+    إذا كان !highlightsSidebar?.classList.contains('hidden')) {
         updateHighlightsList();
     }
 }
 
 function loadHighlightsForPage(canvas, ctx, pageNum) {
-    if (!currentPdfPath || !highlights[currentPdfPath] || !highlights[currentPdfPath][pageNum]) {
+    إذا كان !currentPdfPath || !highlights[currentPdfPath] || !highlights[currentPdfPath][pageNum]) {
         return;
     }
     
     const highlightDataArray = highlights[currentPdfPath][pageNum];
     
     // ✅ دعم الصيغة القديمة (object) والجديدة (array)
-    if (Array.isArray(highlightDataArray)) {
+    إذا كان Array.isArray(highlightDataArray)) {
         // الصيغة الجديدة - تحديدات متعددة
         highlightDataArray.forEach(highlightData => {
             // ✅ إعادة رسم التحديد باستخدام النسب المئوية
-            if (highlightData.normalizedRect && highlightData.color) {
+            إذا كان highlightData.normalizedRect && highlightData.color) {
                 const rect = highlightData.normalizedRect;
                 
                 // ✅ تحويل النسب المئوية إلى pixels حسب حجم Canvas الحالي
@@ -3043,13 +3147,13 @@ function loadHighlightsForPage(canvas, ctx, pageNum) {
 }
 
 function undoHighlight() {
-    if (highlightHistory.length === 0) return;
+    إذا كان highlightHistory.length === 0) return;
     
     const lastAction = highlightHistory.pop();
     const { pdfPath, pageNum, previousData } = lastAction;
     
-    if (highlights[pdfPath]) {
-        if (previousData === null) {
+    إذا كان highlights[pdfPath]) {
+        إذا كان previousData === null) {
             delete highlights[pdfPath][pageNum];
         } else {
             highlights[pdfPath][pageNum] = previousData;
@@ -3059,9 +3163,9 @@ function undoHighlight() {
         
         // Reload the canvas
         const pageElement = document.querySelector(`[data-page-num="${pageNum}"]`);
-        if (pageElement) {
+        إذا كان pageElement) {
             const canvas = pageElement.querySelector('.highlight-canvas');
-            if (canvas) {
+            إذا كان canvas) {
                 const ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 loadHighlightsForPage(canvas, ctx, pageNum);
@@ -3072,17 +3176,17 @@ function undoHighlight() {
 
 // ✅ وظيفة حذف الهايلايت
 function deleteHighlight(pageNum, highlightId = null) {
-    if (!currentPdfPath || !highlights[currentPdfPath]) return;
+    إذا كان !currentPdfPath || !highlights[currentPdfPath]) return;
     
     const highlightDataArray = highlights[currentPdfPath][pageNum];
     
-    if (highlightId) {
+    إذا كان highlightId) {
         // ✅ حذف تحديد معين بناءً على ID
-        if (Array.isArray(highlightDataArray)) {
+        إذا كان Array.isArray(highlightDataArray)) {
             highlights[currentPdfPath][pageNum] = highlightDataArray.filter(h => h.id !== highlightId);
             
             // إذا أصبحت القائمة فارغة، احذف الصفحة من الكائن
-            if (highlights[currentPdfPath][pageNum].length === 0) {
+            إذا كان highlights[currentPdfPath][pageNum].length === 0) {
                 delete highlights[currentPdfPath][pageNum];
             }
         }
@@ -3096,20 +3200,20 @@ function deleteHighlight(pageNum, highlightId = null) {
     
     // ✅ حذف من الـ PDF نفسه (مسح الـ canvas وإعادة رسم المتبقي)
     const pageElement = document.getElementById(`page-${pageNum}`);
-    if (pageElement) {
+    إذا كان pageElement) {
         const highlightCanvas = pageElement.querySelector('.highlight-canvas');
-        if (highlightCanvas) {
+        إذا كان highlightCanvas) {
             const ctx = highlightCanvas.getContext('2d');
             
             // ✅ مسح كامل
             ctx.clearRect(0, 0, highlightCanvas.width, highlightCanvas.height);
             
             // ✅ إعادة رسم التحديدات المتبقية فقط
-            if (highlights[currentPdfPath]?.[pageNum]) {
+            إذا كان highlights[currentPdfPath]?.[pageNum]) {
                 const remainingHighlights = highlights[currentPdfPath][pageNum];
-                if (Array.isArray(remainingHighlights) && remainingHighlights.length > 0) {
+                إذا كان Array.isArray(remainingHighlights) && remainingHighlights.length > 0) {
                     remainingHighlights.forEach(h => {
-                        if (h.rect && h.color) {
+                        إذا كان h.rect && h.color) {
                             drawFilledRectangle(ctx, 
                                 h.rect.x, 
                                 h.rect.y, 
@@ -3130,7 +3234,7 @@ function deleteHighlight(pageNum, highlightId = null) {
 
 // ✅ حذف جميع التحديدات في PDF الحالي (Reset)
 function clearAllHighlightsInPDF() {
-    if (!currentPdfPath || !highlights[currentPdfPath]) return;
+    إذا كان !currentPdfPath || !highlights[currentPdfPath]) return;
     
     // ✅ حذف جميع التحديدات من الكائن
     delete highlights[currentPdfPath];
@@ -3142,7 +3246,7 @@ function clearAllHighlightsInPDF() {
     const allPages = document.querySelectorAll('.pdf-page');
     allPages.forEach(pageElement => {
         const highlightCanvas = pageElement.querySelector('.highlight-canvas');
-        if (highlightCanvas) {
+        إذا كان highlightCanvas) {
             const ctx = highlightCanvas.getContext('2d');
             ctx.clearRect(0, 0, highlightCanvas.width, highlightCanvas.height);
         }
@@ -3163,8 +3267,8 @@ function addDeleteOnHover(canvas, pageElement, pageNum) {
     // ✅ تتبع الماوس لكشف التحديد
     canvas.addEventListener('mousemove', (e) => {
         // تجاهل في وضع التحديد أو الممحاة
-        if (isHighlightMode || isEraserMode) {
-            if (deleteBtn) {
+        إذا كان isHighlightMode || isEraserMode) {
+            إذا كان deleteBtn) {
                 deleteBtn.remove();
                 deleteBtn = null;
             }
@@ -3172,7 +3276,7 @@ function addDeleteOnHover(canvas, pageElement, pageNum) {
         }
         
         // التحقق من وجود هايلايتات
-        if (!highlights[currentPdfPath]?.[pageNum]) return;
+        إذا كان !highlights[currentPdfPath]?.[pageNum]) return;
         
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
@@ -3185,16 +3289,16 @@ function addDeleteOnHover(canvas, pageElement, pageNum) {
         let foundHighlight = null;
         for (let i = highlightsToCheck.length - 1; i >= 0; i--) {
             const h = highlightsToCheck[i];
-            if (h.rect && x >= h.rect.x && x <= h.rect.x + h.rect.width &&
+            إذا كان h.rect && x >= h.rect.x && x <= h.rect.x + h.rect.width &&
                 y >= h.rect.y && y <= h.rect.y + h.rect.height) {
                 foundHighlight = h;
                 break;
             }
         }
         
-        if (foundHighlight && foundHighlight.id !== currentHighlightId) {
+        إذا كان foundHighlight && foundHighlight.id !== currentHighlightId) {
             // ✅ إنشاء زر X جديد
-            if (deleteBtn) deleteBtn.remove();
+            إذا كان deleteBtn) deleteBtn.remove();
             
             currentHighlightId = foundHighlight.id;
             deleteBtn = document.createElement('button');
@@ -3249,7 +3353,7 @@ function addDeleteOnHover(canvas, pageElement, pageNum) {
             });
             
             document.body.appendChild(deleteBtn);
-        } else if (!foundHighlight && deleteBtn) {
+        } else إذا كان !foundHighlight && deleteBtn) {
             // ✅ إزالة الزر إذا غادر المؤشر المستطيل
             deleteBtn.remove();
             deleteBtn = null;
@@ -3259,7 +3363,7 @@ function addDeleteOnHover(canvas, pageElement, pageNum) {
     
     // ✅ تنظيف عند مغادرة الـ canvas
     canvas.addEventListener('mouseleave', () => {
-        if (deleteBtn) {
+        إذا كان deleteBtn) {
             deleteBtn.remove();
             deleteBtn = null;
             currentHighlightId = null;
@@ -3274,7 +3378,7 @@ function addDeleteOnHover(canvas, pageElement, pageNum) {
 function togglePageInput() {
     const isActive = pageInputContainer?.classList.contains('active');
     
-    if (isActive) {
+    إذا كان isActive) {
         // Hide input, show display
         pageInputContainer?.classList.remove('active');
         pageInfoDisplay?.classList.remove('editing');
@@ -3284,7 +3388,7 @@ function togglePageInput() {
         pageInfoDisplay?.classList.add('editing');
         
         // Focus input and set current page
-        if (pageInput && currentPageSpan) {
+        إذا كان pageInput && currentPageSpan) {
             pageInput.value = currentPageSpan.textContent;
             pageInput.max = pageCountSpan?.textContent || '1';
             setTimeout(() => pageInput.focus(), 100);
@@ -3296,21 +3400,21 @@ async function jumpToPage() {
     const targetPage = parseInt(pageInput?.value || '1');
     const maxPage = parseInt(pageCountSpan?.textContent || '1');
     
-    if (!targetPage || targetPage < 1 || targetPage > maxPage) {
+    إذا كان !targetPage || targetPage < 1 || targetPage > maxPage) {
         alert(`Please enter a page number between 1 and ${maxPage}`);
         return;
     }
     
     // ✅ البحث عن الصفحة المستهدفة
     const pageElement = document.getElementById(`page-${targetPage}`);
-    if (pageElement && viewerContent) {
+    إذا كان pageElement && viewerContent) {
         // ✅ إخفاء الـ input بعد القفز
         pageInputContainer?.classList.remove('active');
         pageInfoDisplay?.classList.remove('editing');
         
         // ✅ تحديث رقم الصفحة الحالي فوراً (مع "Loading..." إذا لم تكن محملة)
-        if (currentPageSpan) {
-            if (pageElement.classList.contains('loading') && !renderedPages.has(targetPage)) {
+        إذا كان currentPageSpan) {
+            إذا كان pageElement.classList.contains('loading') && !renderedPages.has(targetPage)) {
                 currentPageSpan.textContent = `${targetPage}...`;
             } else {
                 currentPageSpan.textContent = targetPage;
@@ -3318,10 +3422,10 @@ async function jumpToPage() {
         }
         
         // ✅ تحميل الصفحة إذا لم تكن محملة (Lazy Loading)
-        if (pageElement.classList.contains('loading') && !renderedPages.has(targetPage)) {
+        إذا كان pageElement.classList.contains('loading') && !renderedPages.has(targetPage)) {
             await renderPage(targetPage);
             // ✅ تحديث رقم الصفحة بعد التحميل
-            if (currentPageSpan) {
+            إذا كان currentPageSpan) {
                 currentPageSpan.textContent = targetPage;
             }
         }
@@ -3342,7 +3446,7 @@ async function jumpToPageFromNavbar() {
     const targetPage = parseInt(navbarPageInput?.value || '1');
     const maxPage = parseInt(pageCountNavbar?.textContent || '1');
     
-    if (!targetPage || targetPage < 1 || targetPage > maxPage) {
+    إذا كان !targetPage || targetPage < 1 || targetPage > maxPage) {
         alert(`Please enter a page number between 1 and ${maxPage}`);
         return;
     }
@@ -3350,22 +3454,22 @@ async function jumpToPageFromNavbar() {
     // ✅ إخفاء الـ input
     pageInputWrapper?.classList.remove('active');
     pageInputWrapper?.classList.add('hidden');
-    if (pageCounterDisplay) pageCounterDisplay.style.display = 'flex';
+    إذا كان pageCounterDisplay) pageCounterDisplay.style.display = 'flex';
     
     // ✅ البحث عن الصفحة المستهدفة
     const pageElement = document.getElementById(`page-${targetPage}`);
-    if (pageElement && viewerContent) {
+    إذا كان pageElement && viewerContent) {
         // ✅ تحميل الصفحة فوراً إذا لم تكن محملة
-        if (pageElement.classList.contains('loading') && !renderedPages.has(targetPage)) {
+        إذا كان pageElement.classList.contains('loading') && !renderedPages.has(targetPage)) {
             console.log(`🚀 Force loading page ${targetPage} for jump`);
             await renderPage(targetPage);
             
             // ✅ تحميل الصفحات المجاورة أيضاً (للسلاسة)
             const preloadPages = [targetPage - 1, targetPage + 1, targetPage + 2];
             for (const pageNum of preloadPages) {
-                if (pageNum > 0 && pageNum <= maxPage && !renderedPages.has(pageNum)) {
+                إذا كان pageNum > 0 && pageNum <= maxPage && !renderedPages.has(pageNum)) {
                     const preloadElement = document.getElementById(`page-${pageNum}`);
-                    if (preloadElement && preloadElement.classList.contains('loading')) {
+                    إذا كان preloadElement && preloadElement.classList.contains('loading')) {
                         renderPage(pageNum); // بدون await - background loading
                     }
                 }
@@ -3384,17 +3488,17 @@ async function jumpToPageFromNavbar() {
         
         // ✅ تحديث العدادات بعد القفز
         setTimeout(() => {
-            if (currentPageSpan) currentPageSpan.textContent = targetPage;
-            if (currentPageNavbar) currentPageNavbar.textContent = targetPage;
+            إذا كان currentPageSpan) currentPageSpan.textContent = targetPage;
+            إذا كان currentPageNavbar) currentPageNavbar.textContent = targetPage;
         }, 100);
     }
 }
 
 async function jumpToPageNumber(pageNum) {
     const pageElement = document.getElementById(`page-${pageNum}`);
-    if (pageElement && viewerContent) {
+    إذا كان pageElement && viewerContent) {
         // ✅ تحميل الصفحة إذا لم تكن محملة
-        if (pageElement.classList.contains('loading') && !renderedPages.has(pageNum)) {
+        إذا كان pageElement.classList.contains('loading') && !renderedPages.has(pageNum)) {
             await renderPage(pageNum);
         }
         
@@ -3406,10 +3510,10 @@ async function jumpToPageNumber(pageNum) {
 // ✅ دالة جديدة: القفز بدقة لموقع التحديد
 function jumpToHighlight(pageNum, highlightId) {
     const pageElement = document.getElementById(`page-${pageNum}`);
-    if (!pageElement || !viewerContent) return;
+    إذا كان !pageElement || !viewerContent) return;
     
     // الحصول على معلومات التحديد
-    if (!currentPdfPath || !highlights[currentPdfPath]?.[pageNum]) {
+    إذا كان !currentPdfPath || !highlights[currentPdfPath]?.[pageNum]) {
         // إذا لم تتوفر معلومات التحديد، استخدم القفز العادي
         jumpToPageNumber(pageNum);
         return;
@@ -3421,7 +3525,7 @@ function jumpToHighlight(pageNum, highlightId) {
     // البحث عن التحديد المطلوب
     const highlightData = highlightsToCheck.find(h => h.id === highlightId);
     
-    if (!highlightData || !highlightData.rect) {
+    إذا كان !highlightData || !highlightData.rect) {
         // إذا لم يتم العثور على rect، استخدم القفز العادي
         jumpToPageNumber(pageNum);
         return;
@@ -3431,7 +3535,7 @@ function jumpToHighlight(pageNum, highlightId) {
     const rect = highlightData.rect;
     const canvas = pageElement.querySelector('canvas');
     
-    if (!canvas) {
+    إذا كان !canvas) {
         jumpToPageNumber(pageNum);
         return;
     }
@@ -3468,7 +3572,7 @@ function jumpToHighlight(pageNum, highlightId) {
 // ============================================
 
 function saveReadingPosition() {
-    if (!currentPdfPath || !viewerContent) return;
+    إذا كان !currentPdfPath || !viewerContent) return;
     
     const scrollTop = viewerContent.scrollTop;
     const scrollLeft = viewerContent.scrollLeft;
@@ -3488,14 +3592,14 @@ function saveReadingPosition() {
 }
 
 function restoreReadingPosition() {
-    if (!currentPdfPath || !viewerContent) return;
+    إذا كان !currentPdfPath || !viewerContent) return;
     
     const position = readingPositions[currentPdfPath];
-    if (!position) {
+    إذا كان !position) {
         console.log('No saved position for this PDF - Starting from beginning');
         // ✅ البدء من الصفحة الأولى إذا لم يكن هناك موقع محفوظ
         setTimeout(() => {
-            if (viewerContent) {
+            إذا كان viewerContent) {
                 viewerContent.scrollTop = 0;
                 viewerContent.scrollLeft = 0;
             }
@@ -3506,14 +3610,14 @@ function restoreReadingPosition() {
     console.log('Restoring reading position:', position);
     
     // Restore scale if saved
-    if (position.scale) {
+    إذا كان position.scale) {
         scale = position.scale;
         updateZoomDisplay();
     }
     
     // Restore scroll position after rendering
     setTimeout(() => {
-        if (viewerContent) {
+        إذا كان viewerContent) {
             viewerContent.scrollTop = position.scrollTop || 0;
             viewerContent.scrollLeft = position.scrollLeft || 0;
         }
@@ -3524,14 +3628,14 @@ function restoreReadingPosition() {
 function startAutoSave() {
     stopAutoSave();
     savePositionInterval = setInterval(() => {
-        if (!viewerOverlay?.classList.contains('hidden')) {
+        إذا كان !viewerOverlay?.classList.contains('hidden')) {
             saveReadingPosition();
         }
     }, 3000);
 }
 
 function stopAutoSave() {
-    if (savePositionInterval) {
+    إذا كان savePositionInterval) {
         clearInterval(savePositionInterval);
         savePositionInterval = null;
     }
@@ -3541,7 +3645,7 @@ function stopAutoSave() {
 viewerContent?.addEventListener('scroll', () => {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-        if (!viewerOverlay?.classList.contains('hidden')) {
+        إذا كان !viewerOverlay?.classList.contains('hidden')) {
             saveReadingPosition();
         }
     }, 500);
@@ -3554,7 +3658,7 @@ viewerContent?.addEventListener('scroll', () => {
 function toggleHighlightsSidebar() {
     const isHidden = highlightsSidebar?.classList.contains('hidden');
     
-    if (isHidden) {
+    إذا كان isHidden) {
         highlightsSidebar?.classList.remove('hidden');
         showHighlightsBtn?.classList.add('active');
         updateHighlightsList();
@@ -3565,12 +3669,12 @@ function toggleHighlightsSidebar() {
 }
 
 function updateHighlightsList() {
-    if (!highlightsContent || !currentPdfPath) return;
+    إذا كان !highlightsContent || !currentPdfPath) return;
     
     const pdfHighlights = highlights[currentPdfPath];
     
     // إذا لا توجد highlights
-    if (!pdfHighlights || Object.keys(pdfHighlights).length === 0) {
+    إذا كان !pdfHighlights || Object.keys(pdfHighlights).length === 0) {
         highlightsContent.innerHTML = `
             <div class="empty-highlights">
                 <i class="fas fa-bookmark"></i>
@@ -3647,7 +3751,7 @@ function updateHighlightsList() {
         const highlightsToDisplay = Array.isArray(highlightDataArray) ? highlightDataArray : [highlightDataArray];
         const highlightData = highlightsToDisplay[highlightIndex];
         
-        if (!highlightData) return;
+        إذا كان !highlightData) return;
         
         // دعم الصيغة القديمة (string) والجديدة (object)
         const highlightURL = typeof highlightData === 'string' ? highlightData : highlightData.highlight;
@@ -3657,7 +3761,7 @@ function updateHighlightsList() {
         const thumbCtx = thumbCanvas.getContext('2d');
         
         // ✅ إذا كانت إحداثيات المستطيل موجودة - عرض المنطقة المحددة فقط
-        if (pdfURL && rectBounds && rectBounds.width > 0 && rectBounds.height > 0) {
+        إذا كان pdfURL && rectBounds && rectBounds.width > 0 && rectBounds.height > 0) {
             const pdfImg = new Image();
             pdfImg.onload = () => {
                 // ✅ قص المنطقة المحددة فقط من صورة PDF
@@ -3680,7 +3784,7 @@ function updateHighlightsList() {
             pdfImg.src = pdfURL;
         }
         // ✅ الصيغة القديمة أو بدون إحداثيات - عرض الصفحة كاملة + الهايلايت
-        else if (pdfURL) {
+        else إذا كان pdfURL) {
             const pdfImg = new Image();
             pdfImg.onload = () => {
                 const scale = Math.min(280 / pdfImg.width, 100 / pdfImg.height);
@@ -3723,7 +3827,7 @@ function updateHighlightsList() {
             const pageNum = parseInt(btn.dataset.page);
             const highlightId = btn.dataset.highlightId;
             
-            if (confirm('Delete this highlight?')) {
+            إذا كان confirm('Delete this highlight?')) {
                 deleteHighlight(pageNum, highlightId);
             }
         });
@@ -3757,7 +3861,7 @@ document.addEventListener('keydown', function(e) {
     // ==========================================
     // ✅ ESC KEY - أولوية قصوى
     // ==========================================
-    if (e.key === 'Escape') {
+    إذا كان e.key === 'Escape') {
         console.log('🔴 ESC detected!');
         e.preventDefault();
         e.stopPropagation();
@@ -3767,38 +3871,38 @@ document.addEventListener('keydown', function(e) {
         console.log('📄 PDF Open Status:', isPdfOpen);
         
         // 1. إغلاق Dialogs/Menus أولاً
-        if (updateDialog && !updateDialog.classList.contains('hidden')) {
+        إذا كان updateDialog && !updateDialog.classList.contains('hidden')) {
             console.log('✅ Closing Update Dialog');
             updateDialog.classList.add('hidden');
             return;
         }
         
-        if (settingsMenu && !settingsMenu.classList.contains('hidden')) {
+        إذا كان settingsMenu && !settingsMenu.classList.contains('hidden')) {
             console.log('✅ Closing Settings Menu');
             settingsMenu.classList.add('hidden');
             return;
         }
         
-        if (contextMenu && !contextMenu.classList.contains('hidden')) {
+        إذا كان contextMenu && !contextMenu.classList.contains('hidden')) {
             console.log('✅ Closing Context Menu');
             contextMenu.classList.add('hidden');
             return;
         }
         
-        if (emptyContextMenu && !emptyContextMenu.classList.contains('hidden')) {
+        إذا كان emptyContextMenu && !emptyContextMenu.classList.contains('hidden')) {
             console.log('✅ Closing Empty Context Menu');
             emptyContextMenu.classList.add('hidden');
             return;
         }
         
         // 2. إذا كان PDF مفتوح
-        if (isPdfOpen) {
+        إذا كان isPdfOpen) {
             // تحقق من input box
-            if (pageInputWrapper && !pageInputWrapper.classList.contains('hidden')) {
+            إذا كان pageInputWrapper && !pageInputWrapper.classList.contains('hidden')) {
                 console.log('✅ Closing input box');
                 pageInputWrapper.classList.remove('active');
                 pageInputWrapper.classList.add('hidden');
-                if (pageCounterDisplay) {
+                إذا كان pageCounterDisplay) {
                     pageCounterDisplay.style.display = 'flex';
                 }
                 return;
@@ -3816,7 +3920,7 @@ document.addEventListener('keydown', function(e) {
         }
         
         // 3. إذا كنا في المكتبة، افتح آخر PDF
-        if (!isPdfOpen && lastOpenedPdf) {
+        إذا كان !isPdfOpen && lastOpenedPdf) {
             console.log('🔴 Opening last PDF:', lastOpenedPdf);
             try {
                 openViewer(lastOpenedPdf);
@@ -3836,34 +3940,34 @@ document.addEventListener('keydown', function(e) {
     // ==========================================
     
     // تجاهل إذا كان المستخدم يكتب
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    إذا كان e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
         return;
     }
     
     // تحقق من أن PDF مفتوح
     const isPdfOpen = viewerOverlay && !viewerOverlay.classList.contains('hidden');
-    if (!isPdfOpen) return;
+    إذا كان !isPdfOpen) return;
     
     // + أو = - تكبير
-    if (e.key === '+' || e.key === '=') {
+    إذا كان e.key === '+' || e.key === '=') {
         e.preventDefault();
         zoomIn();
     }
     
     // - - تصغير
-    if (e.key === '-' || e.key === '_') {
+    إذا كان e.key === '-' || e.key === '_') {
         e.preventDefault();
         zoomOut();
     }
     
     // 0 - Fit to Width
-    if (e.key === '0') {
+    إذا كان e.key === '0') {
         e.preventDefault();
         resetZoom();
     }
     
     // Ctrl + I - عكس الألوان
-    if (e.ctrlKey && e.key.toLowerCase() === 'i') {
+    إذا كان e.ctrlKey && e.key.toLowerCase() === 'i') {
         e.preventDefault();
         toggleInvertColors();
     }
@@ -3881,9 +3985,9 @@ function refreshLibrary() {
     
     // ✅ تحديث موقع الكتاب فقط (بدون رسم كامل)
     // البحث عن الكتاب الحالي وتحديث حالته
-    if (currentPdfPath) {
+    إذا كان currentPdfPath) {
         const pdf = pdfs.find(p => p.path === currentPdfPath);
-        if (pdf) {
+        إذا كان pdf) {
             // البحث عن البطاقة في الشبكة
             const allCards = [...document.querySelectorAll('.pdf-card')];
             const card = allCards.find(c => {
@@ -3891,12 +3995,12 @@ function refreshLibrary() {
                 return titleElement && titleElement.textContent === pdf.name.replace('.pdf', '');
             });
             
-            if (card) {
+            إذا كان card) {
                 const targetGrid = pdf.read ? readGrid : pdfGrid;
                 const currentGrid = card.parentElement;
                 
                 // ✅ نقل البطاقة فقط إذا تغيرت حالتها
-                if (targetGrid && currentGrid !== targetGrid) {
+                إذا كان targetGrid && currentGrid !== targetGrid) {
                     // إضافة animation للانتقال
                     card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
                     card.style.opacity = '0';
@@ -3917,7 +4021,7 @@ function refreshLibrary() {
                         // إظهار/إخفاء قسم Already Read
                         const readSection = document.getElementById('read-section');
                         const readCards = readGrid?.querySelectorAll('.pdf-card');
-                        if (readCards && readCards.length > 0) {
+                        إذا كان readCards && readCards.length > 0) {
                             readSection?.classList.remove('hidden');
                         } else {
                             readSection?.classList.add('hidden');
@@ -3944,7 +4048,7 @@ searchInput?.addEventListener('input', (e) => {
     currentSearchQuery = e.target.value.trim().toLowerCase();
     
     // إظهار/إخفاء زر المسح
-    if (currentSearchQuery) {
+    إذا كان currentSearchQuery) {
         clearSearchBtn?.classList.remove('hidden');
     } else {
         clearSearchBtn?.classList.add('hidden');
@@ -3968,7 +4072,7 @@ function applySearch() {
     allCards.forEach(card => {
         const title = card.querySelector('.pdf-title')?.textContent.toLowerCase() || '';
         
-        if (!currentSearchQuery || title.includes(currentSearchQuery)) {
+        إذا كان !currentSearchQuery || title.includes(currentSearchQuery)) {
             card.style.display = '';
         } else {
             card.style.display = 'none';
@@ -3984,9 +4088,9 @@ function updateEmptyStates() {
     const readCards = readGrid?.querySelectorAll('.pdf-card:not([style*="display: none"])');
     
     // Unread section
-    if (unreadCards && unreadCards.length === 0) {
+    إذا كان unreadCards && unreadCards.length === 0) {
         emptyState?.classList.remove('hidden');
-        if (currentSearchQuery) {
+        إذا كان currentSearchQuery) {
             emptyState.querySelector('h2').textContent = 'No results found';
             emptyState.querySelector('p').textContent = `No PDFs match "${currentSearchQuery}"`;
         } else {
@@ -3998,7 +4102,7 @@ function updateEmptyStates() {
     }
     
     // Read section
-    if (readCards && readCards.length === 0) {
+    إذا كان readCards && readCards.length === 0) {
         emptyReadState?.classList.remove('hidden');
     } else {
         emptyReadState?.classList.add('hidden');
@@ -4028,14 +4132,14 @@ async function openRenameModal(pdf) {
     renameInput.value = nameWithoutExt;
     
     // Set current name display (بدون .pdf)
-    if (renameCurrentName) {
+    إذا كان renameCurrentName) {
         renameCurrentName.textContent = nameWithoutExt;
     }
     
     // ✅ تحميل صورة الغلاف
     try {
         const thumbnail = await generateThumbnail(pdf.path);
-        if (thumbnail) {
+        إذا كان thumbnail) {
             renameCoverImg.src = thumbnail;
             renameCoverImg.classList.add('loaded');
         }
@@ -4062,12 +4166,12 @@ function closeRenameModal() {
 }
 
 async function confirmRename() {
-    if (!currentRenamePdf) return;
+    إذا كان !currentRenamePdf) return;
     
     let newName = renameInput.value.trim();
     
     // ✅ منع الاسم الفارغ
-    if (!newName) {
+    إذا كان !newName) {
         alert('⚠️ Please enter a valid name');
         renameInput.focus();
         return;
@@ -4076,7 +4180,7 @@ async function confirmRename() {
     // ✅ إزالة أي .pdf أو فورمات آخر من الإدخال
     newName = newName.replace(/\.(pdf|epub|doc|docx|txt)$/i, '');
     
-    if (!newName) {
+    إذا كان !newName) {
         alert('⚠️ Please enter a valid name');
         renameInput.focus();
         return;
@@ -4112,17 +4216,17 @@ renameConfirmBtn?.addEventListener('click', confirmRename);
 
 // ✅ Close on overlay click
 renameModal?.addEventListener('click', (e) => {
-    if (e.target === renameModal || e.target.classList.contains('rename-modal-overlay')) {
+    إذا كان e.target === renameModal || e.target.classList.contains('rename-modal-overlay')) {
         closeRenameModal();
     }
 });
 
 // ✅ Enter to confirm, Escape to cancel
 renameInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    إذا كان e.key === 'Enter') {
         e.preventDefault();
         confirmRename();
-    } else if (e.key === 'Escape') {
+    } else إذا كان e.key === 'Escape') {
         e.preventDefault();
         closeRenameModal();
     }
@@ -4150,7 +4254,7 @@ mainContainer?.addEventListener('dragenter', (e) => {
     e.preventDefault();
     e.stopPropagation();
     dragCounter++;
-    if (dragCounter === 1) {
+    إذا كان dragCounter === 1) {
         mainContainer.classList.add('drag-active');
         console.log('🎯 Drag entered - counter:', dragCounter);
     }
@@ -4160,7 +4264,7 @@ mainContainer?.addEventListener('dragleave', (e) => {
     e.preventDefault();
     e.stopPropagation();
     dragCounter--;
-    if (dragCounter === 0) {
+    إذا كان dragCounter === 0) {
         mainContainer.classList.remove('drag-active');
         console.log('🎯 Drag left - counter:', dragCounter);
     }
@@ -4178,7 +4282,7 @@ mainContainer?.addEventListener('drop', async (e) => {
     mainContainer.classList.remove('drag-active');
     
     // ✅ التحقق من وجود ملفات
-    if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) {
+    إذا كان !e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) {
         console.warn('⚠️ No files dropped');
         return;
     }
@@ -4197,14 +4301,14 @@ mainContainer?.addEventListener('drop', async (e) => {
         });
         
         // التحقق من نوع الملف
-        if (file.type === 'application/pdf' || 
+        إذا كان file.type === 'application/pdf' || 
             (file.name && file.name.toLowerCase().endsWith('.pdf')) ||
             (file.path && file.path.toLowerCase().endsWith('.pdf'))) {
             files.push(file);
         }
     }
     
-    if (files.length === 0) {
+    إذا كان files.length === 0) {
         alert('⚠️ Please drop PDF files only');
         return;
     }
@@ -4220,7 +4324,7 @@ mainContainer?.addEventListener('drop', async (e) => {
             let filePath = file.path;
             
             // ✅ إذا لم يكن path متاحاً، استخدم طريقة بديلة
-            if (!filePath) {
+            إذا كان !filePath) {
                 console.warn('⚠️ file.path not available, using alternative method');
                 
                 // حفظ الملف مؤقتاً باستخدام FileReader
@@ -4238,7 +4342,7 @@ mainContainer?.addEventListener('drop', async (e) => {
             const storagePath = await window.electronAPI.copyPdfToStorage(filePath);
             
             // التحقق من عدم وجود تكرار
-            if (!pdfs.some(p => p.path === storagePath)) {
+            إذا كان !pdfs.some(p => p.path === storagePath)) {
                 const name = storagePath.split(/[\\/]/).pop();
                 pdfs.push({
                     path: storagePath,
@@ -4257,7 +4361,7 @@ mainContainer?.addEventListener('drop', async (e) => {
             errorCount++;
         }
     }
-      if (successCount > 0) {
+      إذا كان successCount > 0) {
         saveAndRender();
         
         // إظهار رسالة نجاح
@@ -4278,7 +4382,7 @@ mainContainer?.addEventListener('drop', async (e) => {
             setTimeout(() => notification.remove(), 300);
         }, 3000);    }
     
-    if (errorCount > 0) {
+    إذا كان errorCount > 0) {
         alert(`⚠️ Failed to add ${errorCount} file${errorCount > 1 ? 's' : ''}. Check console for details.`);
     }
 });
@@ -4294,7 +4398,7 @@ window.electronAPI.onOpenExternalPdf(async (filePath) => {
     try {
         // التحقق من وجود الملف
         const exists = await window.electronAPI.checkFileExists(filePath);
-        if (!exists) {
+        إذا كان !exists) {
             alert('❌ File not found');
             return;
         }
@@ -4316,3 +4420,95 @@ window.electronAPI.onOpenExternalPdf(async (filePath) => {
         alert('Failed to open PDF: ' + error.message);
     }
 });
+
+// ════════════════════════════════════════════════════════
+// 🎯 DYNAMIC BANNER SYSTEM
+// ════════════════════════════════════════════════════════
+
+const BANNER_URL = 'https://raw.githubusercontent.com/russianff13-crypto/PDF-Library/main/banner.jpg';
+const BANNER_CACHE_KEY = 'cached_banner_image';
+const BANNER_CLOSED_KEY = 'banner_closed';
+
+async function loadBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    const bannerImage = document.getElementById('banner-image');
+    const closeBannerBtn = document.getElementById('close-banner');
+    
+    // Check if user closed the banner before
+    const bannerClosed = localStorage.getItem(BANNER_CLOSED_KEY);
+    if (bannerClosed === 'true') {
+        console.log('📢 Banner was closed by user');
+        return;
+    }
+    
+    try {
+        // Try to load banner from GitHub
+        console.log('📡 Fetching banner from GitHub...');
+        
+        const response = await fetch(BANNER_URL, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            
+            // Save banner to localStorage as base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                localStorage.setItem(BANNER_CACHE_KEY, reader.result);
+                console.log('✅ Banner cached');
+            };
+            reader.readAsDataURL(blob);
+            
+            // Show banner
+            bannerImage.src = imageUrl;
+            showBanner();
+            
+            console.log('✅ Banner loaded from GitHub');
+        } else {
+            throw new Error('Failed to fetch banner');
+        }
+    } catch (error) {
+        console.warn('⚠️ Could not fetch banner:', error.message);
+        
+        // Load cached banner
+        const cachedBanner = localStorage.getItem(BANNER_CACHE_KEY);
+        if (cachedBanner) {
+            bannerImage.src = cachedBanner;
+            showBanner();
+            console.log('✅ Loaded cached banner');
+        } else {
+            console.log('ℹ️ No cached banner');
+        }
+    }
+    
+    // Close button
+    closeBannerBtn?.addEventListener('click', () => {
+        hideBanner();
+        localStorage.setItem(BANNER_CLOSED_KEY, 'true');
+        console.log('📢 Banner closed by user');
+    });
+}
+
+function showBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    bannerContainer.classList.add('show');
+    bannerContainer.classList.remove('hidden');
+    document.body.classList.add('banner-visible');
+}
+
+function hideBanner() {
+    const bannerContainer = document.getElementById('banner-container');
+    bannerContainer.classList.remove('show');
+    setTimeout(() => {
+        bannerContainer.classList.add('hidden');
+        document.body.classList.remove('banner-visible');
+    }, 300);
+}
+
+// Load banner on startup
+loadBanner();
