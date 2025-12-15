@@ -57,7 +57,7 @@
 ## 📥 Installation
 
 ### New Installation
-Download `Kita PDF Reader-Setup-2.2.1.exe` and run it.
+Download `Kita-PDF-Reader-Setup-2.2.1.exe` and run it.
 
 ### Updating from v2.2.0
 The app will automatically notify you about this update!

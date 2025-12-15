@@ -29,9 +29,8 @@
             "x64"
           ]
         }
-      ],
-      "icon": "icon.ico",
-      "artifactName": "${productName}-Setup-${version}.${ext}",
+      ],      "icon": "icon.ico",
+      "artifactName": "Kita-PDF-Reader-Setup-${version}.${ext}",
       "requestedExecutionLevel": "asInvoker"
     },    "nsis": {
       "oneClick": true,

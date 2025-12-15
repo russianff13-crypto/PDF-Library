@@ -46,9 +46,22 @@ BooksStorage/
 ~*
 
 # Package manager
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Documentation drafts (keep only final versions)
+ABOUT_DIALOG_*.md
+DEPLOYMENT_*.md
+*_INSTRUCTIONS.md
+QUICK-START-*.md
+MANUAL-COMMANDS.ps1
+
+# Old projects
+HemoApp/
+
+# PowerShell scripts (temporary)
+cleanup.ps1
+fix-filename.ps1
 
 # Optional
 .npm
