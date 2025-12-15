@@ -79,33 +79,87 @@
                     <i class="fas fa-heart"></i>
                     <div class="settings-item-content">
                         <span>About Kita</span>
-                        <small>Version 2.2.0</small>
+                        <small>Version 2.2.1</small>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>    <!-- About Dialog -->
-    <div id="about-dialog" class="update-dialog hidden">        <div class="update-content">
-            <img src="iconTrans.png" alt="Kita" class="about-icon">
-            <h2>Kita PDF Reader</h2>
-            <p class="about-version">Version 2.2.0</p>
-            <p class="about-description">Modern PDF reader with advanced features</p>
-            <div class="about-info">
-                <div class="about-info-item">
-                    <i class="fas fa-code"></i>
-                    <span>Built with Electron & PDF.js</span>
+        </div>    </div>    <!-- ✨ About Dialog - Beautiful & Spacious Design -->
+    <div id="about-dialog" class="about-dialog-overlay hidden">
+        <div class="about-beautiful-container">
+            <!-- Close Button -->
+            <button class="about-close-x" id="close-about-btn">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- App Icon & Title -->
+            <div class="about-app-header">
+                <div class="about-app-logo">
+                    <img src="iconTrans.png" alt="Kita PDF Reader">
+                    <div class="logo-glow"></div>
                 </div>
-                <div class="about-info-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>samoutff22@gmail.com</span>
+                <h1>Kita PDF Reader</h1>
+                <div class="version-tag">Version 2.2.1</div>
+                <p class="app-subtitle">Modern • Lightweight • Efficient</p>
+            </div>
+            
+            <!-- Features Section -->
+            <div class="about-features-section">
+                <div class="feature-box">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h4>Clean Reading</h4>
+                    <p>Distraction-free experience</p>
                 </div>
-                <div class="about-info-item">
-                    <i class="fas fa-copyright"></i>
-                    <span>© 2025 All Rights Reserved</span>
+                
+                <div class="feature-box">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <h4>Dark Mode</h4>
+                    <p>Easy on your eyes</p>
+                </div>
+                
+                <div class="feature-box">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h4>Library</h4>
+                    <p>Organize your PDFs</p>
                 </div>
             </div>
-            <div class="update-actions">
-                <button id="close-about-btn" class="btn-primary">Close</button>
+            
+            <!-- Contact Section -->
+            <div class="about-contact-section-new">
+                <div class="contact-box-header">
+                    <i class="fas fa-comment-dots"></i>
+                    <div>
+                        <h3>We'd Love to Hear From You</h3>
+                        <p>Have questions, suggestions, or ideas? Feel free to reach out anytime.</p>
+                    </div>
+                </div>
+                
+                <div class="contact-email-container" id="copy-email-btn">
+                    <div class="email-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <span class="email-address">samoutff22@gmail.com</span>
+                    <button class="copy-btn-new">
+                        <i class="fas fa-copy"></i>
+                        Copy
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="about-footer-section">
+                <p>&copy; 2025 Kita PDF Reader. All rights reserved.</p>
+            </div>
+            
+            <!-- Toast -->
+            <div class="about-copy-toast" id="email-copied">
+                <i class="fas fa-check-circle"></i>
+                Email copied to clipboard!
             </div>
         </div>
     </div>

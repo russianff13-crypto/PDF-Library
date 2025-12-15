@@ -52,7 +52,9 @@ function createWindow() {
             contextIsolation: true,
             webSecurity: false,
             // ✅ تفعيل الوصول للملفات في Drag & Drop
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            // ✅ مهم جداً للـ Drag & Drop
+            sandbox: false
         },        backgroundColor: '#1a1a1a',
         show: false,
         title: 'Kita PDF Reader'
@@ -70,18 +72,21 @@ function createWindow() {
                 pendingPdfToOpen = null;
             }, 1000); // انتظر ثانية حتى يكتمل تحميل الواجهة
         }
-    });
-
-    // Open external links in default browser
+    });    // Open external links in default browser
     win.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
         return { action: 'deny' };
     });
     
-    // ✅ دعم Drag & Drop لملفات PDF
+    // ✅ دعم Drag & Drop - السماح بـ file:// URLs فقط
     win.webContents.on('will-navigate', (event, url) => {
-        event.preventDefault();
+        // السماح فقط بـ file:// protocol (للـ Drag & Drop)
+        if (!url.startsWith('file://')) {
+            event.preventDefault();
+        }
     });
+    
+    return win;
 }
 
 app.whenReady().then(() => {
@@ -140,10 +145,33 @@ ipcMain.handle('copy-pdf-to-storage', async (event, originalPath) => {
         // ✅ نسخ الملف
         fs.copyFileSync(originalPath, finalPath);
         console.log(`✅ Copied book to storage: ${path.basename(finalPath)}`);
-        
-        return finalPath;
+          return finalPath;
     } catch (error) {
         console.error('❌ Error copying PDF to storage:', error);
+        throw error;
+    }
+});
+
+// ✅ حفظ ملف مؤقت (للـ Drag & Drop fallback)
+ipcMain.handle('save-temp-file', async (event, fileName, buffer) => {
+    try {
+        const os = require('os');
+        const tempDir = os.tmpdir();
+        const tempPath = path.join(tempDir, 'kita-pdf-temp', fileName);
+        
+        // إنشاء المجلد المؤقت
+        const tempFolder = path.dirname(tempPath);
+        if (!fs.existsSync(tempFolder)) {
+            fs.mkdirSync(tempFolder, { recursive: true });
+        }
+        
+        // حفظ الملف
+        fs.writeFileSync(tempPath, Buffer.from(buffer));
+        console.log(`✅ Saved temp file: ${tempPath}`);
+        
+        return tempPath;
+    } catch (error) {
+        console.error('❌ Error saving temp file:', error);
         throw error;
     }
 });
@@ -273,21 +301,25 @@ ipcMain.handle('close-window', (event) => {
 // 🔄 AUTO-UPDATER HANDLERS
 // ═══════════════════════════════════════════════════════════
 
-// Check for updates
-ipcMain.handle('check-for-updates', async () => {
+// Check for updates (with optional silent mode)
+ipcMain.handle('check-for-updates', async (event, silent = false) => {
     try {
         const result = await autoUpdater.checkForUpdates();
+        const updateAvailable = result.updateInfo.version !== app.getVersion();
+        
         return {
             success: true,
-            updateAvailable: result.updateInfo.version !== app.getVersion(),
+            updateAvailable: updateAvailable,
             currentVersion: app.getVersion(),
             latestVersion: result.updateInfo.version,
-            releaseNotes: result.updateInfo.releaseNotes
+            releaseNotes: result.updateInfo.releaseNotes,
+            silent: silent
         };
     } catch (error) {
         return {
             success: false,
-            error: error.message
+            error: error.message,
+            silent: silent
         };
     }
 });

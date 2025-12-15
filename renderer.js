@@ -134,6 +134,12 @@ let currentSort = localStorage.getItem('currentSort') || 'dateAdded';
         await renderGrid();
         
         console.log('✅ PDF Library ready!');
+        
+        // ✅ فحص التحديثات تلقائياً عند بدء التشغيل (بعد 3 ثواني)
+        setTimeout(() => {
+            checkForUpdatesOnStartup();
+        }, 3000);
+        
     } catch (error) {
         console.error('❌ Error initializing app:', error);
         alert('Error loading application: ' + error.message);
@@ -295,6 +301,82 @@ async function checkAndSyncBooksStorage() {
     } catch (error) {
         console.error('❌ Error checking BooksStorage:', error);
     }
+}
+
+// ✅ فحص التحديثات عند بدء التشغيل (بدون إزعاج)
+async function checkForUpdatesOnStartup() {
+    try {
+        // فحص بدون إظهار dialog
+        const result = await window.electronAPI.checkForUpdates(true); // silent mode
+        
+        if (result.updateAvailable) {
+            // ✅ إظهار إشعار منبثق صغير فقط
+            showUpdateNotification(result.latestVersion, result.currentVersion);
+        } else {
+            console.log('✅ App is up to date (silent check)');
+        }
+    } catch (error) {
+        // في حالة الخطأ (مثل عدم وجود إنترنت)، لا نزعج المستخدم
+        console.log('ℹ️ Could not check for updates (silent mode):', error.message);
+    }
+}
+
+// ✅ إظهار إشعار منبثق صغير للتحديث
+function showUpdateNotification(latestVersion, currentVersion) {
+    // إنشاء الـ toast notification
+    const toast = document.createElement('div');
+    toast.className = 'update-toast';
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fas fa-gift" style="color: #FFD700; font-size: 1.5rem;"></i>
+            <div class="toast-text">
+                <h4>New Update Available!</h4>
+                <p>Version ${latestVersion} is ready</p>
+            </div>
+        </div>
+        <div class="toast-actions">
+            <button class="toast-btn toast-btn-primary" id="toast-update-now">
+                <i class="fas fa-download"></i> Update Now
+            </button>
+            <button class="toast-btn toast-btn-secondary" id="toast-later">
+                Later
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // تأثير الظهور
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+    // Event listeners
+    const updateNowBtn = toast.querySelector('#toast-update-now');
+    const laterBtn = toast.querySelector('#toast-later');
+    
+    updateNowBtn?.addEventListener('click', () => {
+        hideToast(toast);
+        // فتح update dialog الكامل
+        showUpdateDialog('available', { latestVersion, currentVersion });
+    });
+    
+    laterBtn?.addEventListener('click', () => {
+        hideToast(toast);
+    });
+    
+    // إخفاء تلقائي بعد 15 ثانية
+    setTimeout(() => {
+        if (toast.parentElement) {
+            hideToast(toast);
+        }
+    }, 15000);
+}
+
+// ✅ إخفاء الـ toast
+function hideToast(toast) {
+    toast.classList.remove('show');
+    setTimeout(() => {
+        toast.remove();
+    }, 300);
 }
 
 // ============================================
@@ -508,6 +590,46 @@ document.getElementById('close-about-btn')?.addEventListener('click', () => {
     aboutDialog?.classList.add('hidden');
 });
 
+// ✨ Copy Email to Clipboard
+const copyEmailBtn = document.getElementById('copy-email-btn');
+const emailCopied = document.getElementById('email-copied');
+
+copyEmailBtn?.addEventListener('click', async () => {
+    const email = 'samoutff22@gmail.com';
+    
+    try {
+        await navigator.clipboard.writeText(email);
+        
+        // Show notification
+        emailCopied?.classList.add('show');
+        
+        // Hide after 2 seconds
+        setTimeout(() => {
+            emailCopied?.classList.remove('show');
+        }, 2000);
+        
+        console.log('✅ Email copied to clipboard');
+    } catch (error) {
+        console.error('❌ Failed to copy email:', error);
+        
+        // Fallback: Create temporary textarea
+        const textarea = document.createElement('textarea');
+        textarea.value = email;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        // Show notification
+        emailCopied?.classList.add('show');
+        setTimeout(() => {
+            emailCopied?.classList.remove('show');
+        }, 2000);
+    }
+});
+
 // Check for updates
 checkUpdateBtn?.addEventListener('click', async () => {
     settingsMenu?.classList.add('hidden');
@@ -597,13 +719,12 @@ function showUpdateDialog(status, data = {}) {
     
     let content = '';
     
-    switch(status) {
-        case 'checking':
+    switch(status) {        case 'checking':
             content = `
                 <div class="update-content">
                     <div class="update-spinner"></div>
-                    <h3>Checking for updates...</h3>
-                    <p>Please wait while we check for new versions.</p>
+                    <h3>Checking for Updates</h3>
+                    <p style="color: #999;">Connecting to update server...</p>
                 </div>
             `;
             break;
@@ -611,57 +732,89 @@ function showUpdateDialog(status, data = {}) {
         case 'available':
             content = `
                 <div class="update-content">
-                    <i class="fas fa-download update-icon"></i>
-                    <h3>Update Available!</h3>
-                    <p>Version <strong>${data.latestVersion}</strong> is now available.</p>
-                    <p class="update-current">Current: ${data.currentVersion}</p>
+                    <i class="fas fa-gift update-icon" style="color: #FFD700;"></i>
+                    <h3>New Update Available!</h3>
+                    <p style="font-size: 1.1rem; color: #ccc; margin: 0.5rem 0;">
+                        Version <strong style="color: var(--accent-primary);">${data.latestVersion}</strong> is ready to download
+                    </p>
+                    <p style="color: #888; font-size: 0.9rem;">
+                        Current: <span style="color: #aaa;">${data.currentVersion}</span>
+                    </p>
                     <div class="update-actions">
                         <button id="download-update-btn" class="btn-primary">
-                            <i class="fas fa-download"></i> Download Update
+                            <i class="fas fa-download"></i>
+                            <span>Download Now</span>
                         </button>
-                        <button id="close-update-dialog-btn" class="btn-secondary">Later</button>
+                        <button id="close-update-dialog-btn" class="btn-secondary">
+                            <span>Later</span>
+                        </button>
                     </div>
                 </div>
             `;
-            break;
-              case 'downloading':
-            const percent = Math.min(99, Math.round((data.percent || 0) * 10) / 10); // حد أقصى 99% وتقريب لرقم عشري واحد
+            break;case 'downloading':
+            const percent = Math.min(99, Math.round((data.percent || 0) * 10) / 10);
             const speedMB = (data.speedMB || 0).toFixed(2);
             const downloadedMB = (data.downloadedMB || 0).toFixed(1);
             const totalMB = (data.totalMB || 0).toFixed(1);
             
+            // Calculate ETA
+            const remainingMB = totalMB - downloadedMB;
+            const etaSeconds = speedMB > 0 ? Math.ceil(remainingMB / speedMB) : 0;
+            const etaMin = Math.floor(etaSeconds / 60);
+            const etaSec = etaSeconds % 60;
+            const etaText = etaMin > 0 ? `${etaMin}m ${etaSec}s` : `${etaSec}s`;
+            
             content = `
                 <div class="update-content">
                     <i class="fas fa-cloud-download-alt update-icon pulse"></i>
-                    <h3>Downloading Update...</h3>
-                    <div class="download-progress-container">
-                        <div class="download-progress-bar">
-                            <div class="download-progress-fill" style="width: ${percent}%"></div>
+                    <h3>Downloading Update</h3>
+                    
+                    <div class="update-progress-container">
+                        <div class="update-percent">${percent}%</div>
+                        
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar-fill" style="width: ${percent}%"></div>
                         </div>
-                        <div class="download-stats">
-                            <span class="download-percent">${percent}%</span>
-                            <span class="download-size">${downloadedMB} MB / ${totalMB} MB</span>
-                            <span class="download-speed">${speedMB} MB/s</span>
+                        
+                        <div class="update-stats">
+                            <div class="update-speed">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>${speedMB} MB/s</span>
+                            </div>
+                            <div class="update-size-info">
+                                ${downloadedMB} / ${totalMB} MB
+                            </div>
+                            ${etaSeconds > 0 ? `
+                            <div class="update-eta">
+                                <i class="fas fa-clock"></i>
+                                <span>${etaText}</span>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
-                    <p class="download-note">Please don't close the app while downloading...</p>
+                    
+                    <p style="color: #888; font-size: 0.9rem; margin-top: 1.5rem;">
+                        <i class="fas fa-info-circle" style="color: var(--accent-tertiary);"></i>
+                        Please don't close the app while downloading
+                    </p>
                 </div>
             `;
             break;
-            
-        case 'downloaded':
+              case 'downloaded':
             content = `
                 <div class="update-content">
                     <i class="fas fa-check-circle update-icon success pulse"></i>
-                    <h3>Update Downloaded!</h3>
-                    <p>The update has been downloaded successfully.</p>
-                    <p class="update-note">The app will restart now to install the update.</p>
+                    <h3>Update Downloaded Successfully!</h3>
+                    <p style="color: #aaa; font-size: 1rem;">The update is ready to install</p>
                     <div class="update-actions">
                         <button id="install-update-btn" class="btn-primary">
-                            <i class="fas fa-sync-alt"></i> Restart & Install
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Restart & Install</span>
                         </button>
                     </div>
-                    <div class="countdown-timer">Restarting in <span id="countdown">5</span> seconds...</div>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 1rem;">
+                        <i class="fas fa-info-circle"></i> Auto-restarting in <span id="countdown" style="color: var(--accent-primary); font-weight: 600;">5</span> seconds
+                    </p>
                 </div>
             `;
             break;
@@ -4060,17 +4213,23 @@ mainContainer?.addEventListener('drop', async (e) => {
     
     let successCount = 0;
     let errorCount = 0;
-    
-    // إضافة الملفات إلى المكتبة
+      // إضافة الملفات إلى المكتبة
     for (const file of files) {
         try {
-            // ✅ الحصول على المسار الفعلي للملف
-            const filePath = file.path;
+            // ✅ الحصول على المسار الفعلي للملف (Electron-specific)
+            let filePath = file.path;
             
+            // ✅ إذا لم يكن path متاحاً، استخدم طريقة بديلة
             if (!filePath) {
-                console.error('❌ File path not available. Electron webPreferences may need adjustment.');
-                errorCount++;
-                continue;
+                console.warn('⚠️ file.path not available, using alternative method');
+                
+                // حفظ الملف مؤقتاً باستخدام FileReader
+                const arrayBuffer = await file.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+                
+                // حفظ مؤقت في temp folder
+                const tempPath = await window.electronAPI.saveTempFile(file.name, buffer);
+                filePath = tempPath;
             }
             
             console.log(`📄 Processing: ${filePath}`);

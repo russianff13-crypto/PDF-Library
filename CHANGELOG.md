@@ -1,5 +1,53 @@
 # 📋 Changelog - Kita PDF Reader
 
+## [2.2.1] - December 13, 2025
+
+### ✨ New Features
+- ✅ **Auto-Check for Updates on Startup:** 
+  - Automatic update check 3 seconds after app launch
+  - Toast notification when updates available
+  - Silent background check with minimal UI disruption
+  - Shows version number and "Update Now" button
+
+### 🎨 UI/UX Improvements
+- ✅ **Enhanced About Dialog:**
+  - Compact and modern design (600px width, 20% smaller)
+  - Fully responsive design (768px, 600px, 500px breakpoints)
+  - Logo reduced to 70×70px for cleaner look
+  - Removed blur effect from overlay for better performance
+  - Feature badges with hover effects
+  - Contact section with simple yellow background
+  - One-click email copy with toast notification
+  - Fixed toast display bug (no longer shows by default)
+
+- ✅ **Enhanced Update Dialog:**
+  - Real-time download speed display (e.g., 🏎️ 5.32 MB/s)
+  - Percentage progress with large accent color (2rem)
+  - File size indicator (downloaded / total)
+  - Estimated time remaining (ETA) calculation
+  - Animated shimmer progress bar
+  - Colorful gradient (primary to secondary)
+
+- ✅ **Settings Button Polish:**
+  - Fixed hover background issue
+  - Smooth rotation animation only (90deg)
+  - Cleaner visual feedback
+
+### 🔧 Bug Fixes
+- ✅ **Drag & Drop Fixed in Development Mode:**
+  - Works properly in `npm start` mode
+  - Fixed security sandbox configuration
+  - Added fallback using FileReader + arrayBuffer
+  - Save-temp-file IPC handler for edge cases
+  - Updated will-navigate handler for file:// URLs
+
+### 🔄 Auto-Update System
+- ✅ **Differential Updates Enabled:**
+  - Smaller update downloads (only changed files)
+  - No full reinstallation required
+  - Faster update process
+  - GitHub Releases integration
+
 ## [2.2.0] - December 13, 2025
 
 ### ✨ New Features
