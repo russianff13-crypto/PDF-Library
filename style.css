@@ -3947,64 +3947,151 @@ body[data-theme="dark"] .drop-notification {
    🎯 DYNAMIC BANNER STYLES
    ════════════════════════════════════════════════════════ */
 
+@keyframes bannerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ════════════════════════════════════════════════════════
+   🎨 BANNER CONTAINER - فوق الـ Header
+   ════════════════════════════════════════════════════════ */
+
 .banner-container {
-    position: fixed;
-    top: 32px; /* بعد title bar */
-    left: 0;
-    right: 0;
-    height: 80px;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+    width: 100%;
+    max-height: 0;
     overflow: hidden;
-    transition: var(--transition);
+    position: relative;
+    transition: max-height 0.5s ease, opacity 0.3s ease, margin 0.3s ease;
     opacity: 0;
-    transform: translateY(-100%);
+    margin: 0;
+    margin-top: 2rem; /* مسافة من الأعلى */
 }
 
 .banner-container.show {
+    max-height: 400px;
     opacity: 1;
-    transform: translateY(0);
+    margin-bottom: 2rem; /* مسافة قبل الـ header */
+    animation: bannerFadeIn 0.4s ease-out;
 }
 
 .banner-container.hidden {
     display: none;
 }
 
-.banner-image {
+/* ════════════════════════════════════════════════════════
+   ⏳ BANNER SKELETON LOADER
+   ════════════════════════════════════════════════════════ */
+
+.banner-skeleton {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, 
+        var(--accent-primary) 0%, 
+        var(--accent-secondary) 100%);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Light theme skeleton */
+body[data-theme="light"] .banner-skeleton {
+    background: linear-gradient(135deg, 
+        #667eea 0%, 
+        #764ba2 100%);
+}
+
+.banner-skeleton.hidden {
+    display: none;
+}
+
+/* Shimmer animation */
+.skeleton-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* ════════════════════════════════════════════════════════
+   🖼️ BANNER IMAGE
+   ════════════════════════════════════════════════════════ */
+
+.banner-image {
+    width: 100%;
+    height: auto;
+    display: none; /* مخفي حتى يتم التحميل */
     cursor: pointer;
-    transition: var(--transition-fast);
+    border-radius: 12px;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.banner-image.loaded {
+    display: block; /* يظهر بعد التحميل */
+    animation: fadeInImage 0.5s ease-out;
+}
+
+@keyframes fadeInImage {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .banner-image:hover {
-    opacity: 0.9;
+    opacity: 0.96;
 }
 
 .close-banner-btn {
     position: absolute;
-    top: 8px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
     border: none;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 600;
     line-height: 1;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: var(--transition-fast);
-    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    z-index: 5;
 }
 
 .banner-container:hover .close-banner-btn {
@@ -4012,18 +4099,8 @@ body[data-theme="dark"] .drop-notification {
 }
 
 .close-banner-btn:hover {
-    background: rgba(220, 38, 38, 0.9);
+    background: rgba(239, 68, 68, 0.9);
     transform: scale(1.1);
-}
-
-/* Adjust content position when banner is visible */
-body.banner-visible .container {
-    margin-top: 80px;
-    height: calc(100vh - 32px - 80px);
-}
-
-body.banner-visible #pdf-container {
-    top: calc(32px + 80px);
 }
 
 /* ════════════════════════════════════════════════════════

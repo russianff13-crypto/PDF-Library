@@ -1,12 +1,11 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kita PDF Reader</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: file: https://cdnjs.cloudflare.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: file: https://cdnjs.cloudflare.com https://raw.githubusercontent.com; img-src 'self' data: blob: https://raw.githubusercontent.com; connect-src 'self' https://api.github.com https://raw.githubusercontent.com;">
 </head>
 <body>    <!-- Initial Loading Screen -->
     <div class="initial-loading" id="initial-loading">
@@ -25,14 +24,7 @@
             </button>
             <button id="min-btn" class="control-btn" title="Minimize"></button>
             <button id="max-btn" class="control-btn" title="Maximize"></button>
-            <button id="close-btn" class="control-btn close-btn" title="Close"></button>
-        </div>
-    </div>
-
-    <!-- Dynamic Banner -->
-    <div id="banner-container" class="banner-container">
-        <img id="banner-image" src="" alt="Banner" class="banner-image">
-        <button id="close-banner" class="close-banner-btn" title="Close banner">×</button>
+            <button id="close-btn" class="control-btn close-btn" title="Close"></button>        </div>
     </div>
     
     <!-- Settings Menu -->
@@ -68,12 +60,18 @@
             </div>
             
             <div class="settings-divider"></div>
-            
-            <!-- Update & About -->
+              <!-- Update & About -->
             <div class="settings-section">
                 <div class="settings-section-title">
                     <i class="fas fa-info-circle"></i>
                     <span>Application</span>
+                </div>
+                <div class="settings-item" id="reset-banner-btn">
+                    <i class="fas fa-image"></i>
+                    <div class="settings-item-content">
+                        <span>Show Banner Again</span>
+                        <small>Reset banner visibility</small>
+                    </div>
                 </div>
                 <div class="settings-item" id="check-update-btn">
                     <i class="fas fa-sync-alt"></i>
@@ -173,14 +171,22 @@
     <!-- Update Dialog -->
     <div id="update-dialog" class="update-dialog hidden">
         <!-- Content dynamically generated -->
-    </div>
-      <!-- Offline Indicator -->
+    </div>    <!-- Offline Indicator -->
     <div id="offline-indicator" class="offline-indicator hidden">
         <i class="fas fa-wifi-slash"></i>
         <span>Offline Mode</span>
-    </div>
+    </div>    <div class="container" id="main-container">
+        <!-- Dynamic Banner - فوق الـ Header مباشرة -->
+        <div id="banner-container" class="banner-container">
+            <!-- Skeleton Loader -->
+            <div id="banner-skeleton" class="banner-skeleton">
+                <div class="skeleton-shimmer"></div>
+            </div>
+            <!-- البانر الفعلي -->
+            <img id="banner-image" src="" alt="Banner" class="banner-image">
+            <button id="close-banner" class="close-banner-btn" title="Close banner">×</button>
+        </div>
 
-    <div class="container" id="main-container">
         <header>
             <div class="header-left">
                 <h1><i class="fas fa-books"></i> Library</h1>
@@ -373,10 +379,10 @@
                         <span>Confirm</span>
                     </button>
                 </div>
-            </div>
-        </div>
+            </div>        </div>
     </div>
 
+    <script src="banner-system.js"></script>
     <script type="module" src="renderer.js"></script>
 </body>
 </html>
